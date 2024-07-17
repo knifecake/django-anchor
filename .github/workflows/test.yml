@@ -23,7 +23,7 @@ jobs:
 
       - name: Install poetry
         run: |
-          python -m pip install poetry==1.8.4
+          python -m pip install poetry==1.8.3
 
       - name: Configure poetry
         run: |
