@@ -1,5 +1,7 @@
 # Django Attachments
 
+[![Test](https://github.com/knifecake/django-attachments/actions/workflows/test.yml/badge.svg)](https://github.com/knifecake/django-attachments/actions/workflows/test.yml)
+
 A reusable Django app to handle files attached to models, inspired by Ruby on
 Rails' excellent [Active
 Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
