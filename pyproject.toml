@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "django-attachments"
+version = "0.1.0"
+description = "Attach files to Django models"
+authors = ["Elias Hernandis <elias@hernandis.me>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.0.7"
+huey = "^2.5.1"
+base58 = "^2.1.1"
+redis = "^5.0.7"
+pillow = "^10.4.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pre-commit = "^3.7.1"
+coverage = "^7.6.0"
+
+
+[tool.ruff]
+line-length = 88
+indent-width = 4
+target-version = "py312"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

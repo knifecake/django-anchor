@@ -1,0 +1,6 @@
+__pycache__
+.ruff_cache
+*.sqlite3
+demo/media
+tmp
+.DS_Store
