@@ -41,7 +41,7 @@ jobs:
 
       - name: Verify that poetry.lock is consistent with pyproject.toml
         run: |
-          poetry lock --check
+          poetry check --lock
 
       - name: Install dependencies
         run: |
