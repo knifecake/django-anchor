@@ -160,6 +160,13 @@ class Blob(BaseModel):
         they were already present, new attributes passed via keyword arguments
         are only updated locally. To persist changes to the database pass the
         ``save=True`` keyword argument.
+
+        Args:
+            file (DjangoFile or str): The file to wrap in a Blob.
+            avoid_duplicates (bool): Whether to reuse existing blobs with the same hash.
+            filename (str): The name of the file.
+            byte_size (int): The size of the file in bytes.
+            kwargs: Additional fields to set on the Blob.
         """
         if not isinstance(file, DjangoFile):
             file = DjangoFile(file)

@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{include = "anchor"}]
 homepage = "https://github.com/knifecake/django-anchor"
 repository = "https://github.com/knifecake/django-anchor"
-documentation = "https://github.com/knifecake/django-anchor"
+documentation = "https://django-anchor.readthedocs.io/en/latest/"
 keywords = ["django", "files", "attachments"]
 classifiers = [
     "Framework :: Django",
@@ -29,6 +29,8 @@ pillow = "^10.4.0"
 [tool.poetry.group.dev.dependencies]
 pre-commit = "^3.7.1"
 coverage = "^7.6.0"
+sphinx = "^7.4.5"
+toml = "^0.10.2"
 
 
 [tool.ruff]
