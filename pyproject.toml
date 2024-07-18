@@ -6,6 +6,16 @@ authors = ["Elias Hernandis <elias@hernandis.me>"]
 license = "MIT"
 readme = "README.md"
 packages = [{include = "anchor"}]
+homepage = "https://github.com/knifecake/django-anchor"
+repository = "https://github.com/knifecake/django-anchor"
+documentation = "https://github.com/knifecake/django-anchor"
+keywords = ["django", "files", "attachments"]
+classifiers = [
+    "Framework :: Django",
+]
+
+[tool.poetry.urls]
+"Bug Tracker" = "https://github.com/knifecake/django-anchor/issues"
 
 [tool.poetry.dependencies]
 python = "^3.12"
