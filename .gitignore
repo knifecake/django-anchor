@@ -6,3 +6,4 @@ __pycache__
 demo/media
 docs/_build
 tmp
+dist/
