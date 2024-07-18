@@ -4,3 +4,4 @@ __pycache__
 demo/media
 tmp
 .DS_Store
+.coverage
