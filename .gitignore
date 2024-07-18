@@ -4,5 +4,5 @@ __pycache__
 .ruff_cache
 *.sqlite3
 demo/media
-docs/build
+docs/_build
 tmp
