@@ -9,7 +9,7 @@ from django.db import models
 from django.db.models.fields.files import FieldFile, FileField
 from django.utils.functional import cached_property
 
-from attachments.tasks import blob_make_variant
+from anchor.tasks import blob_make_variant
 
 DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
@@ -81,7 +81,7 @@ class VariantFieldFile(FieldFile):
 
         # process according to type
         if self.is_image:
-            from attachments.transformers import PillowImageTransformer
+            from anchor.transformers import PillowImageTransformer
 
             transformer = PillowImageTransformer(**format_params)
             transformer.transform(self.file, variant_file)
@@ -188,7 +188,7 @@ class BlobField(models.ForeignKey):
         related_name="+",
         **kwargs,
     ):
-        to = "attachments.Blob"
+        to = "anchor.Blob"
 
         return super().__init__(
             to=to,
@@ -200,7 +200,7 @@ class BlobField(models.ForeignKey):
         )
 
     def formfield(self, **kwargs: Any) -> Any:
-        from attachments.forms.fields import BlobField as BlobFormField
+        from anchor.forms.fields import BlobField as BlobFormField
 
         return super().formfield(
             **{

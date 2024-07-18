@@ -1,9 +1,24 @@
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericTabularInline
 from django.utils.html import format_html
-from attachments.models.attachment import Attachment
-from attachments.models.blob import Blob
+from anchor.forms.fields import BlobField
+from anchor.forms.widgets import AdminBlobInput
+from anchor.models.attachment import Attachment
+from anchor.models.blob import Blob
 from django.template.defaultfilters import filesizeformat
+
+
+class BlobFieldMixin:
+    """
+    Render a preview of the blob in the admin form.
+
+    Inherit from this in your ModelAdmin class to render a preview of the blob
+    in the admin form.
+    """
+
+    formfield_overrides = {
+        BlobField: {"widget": AdminBlobInput},
+    }
 
 
 @admin.register(Attachment)
@@ -21,7 +36,7 @@ class AttachmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Blob)
-class BlobAdmin(admin.ModelAdmin):
+class BlobAdmin(BlobFieldMixin, admin.ModelAdmin):
     ordering = ("id",)
     date_hierarchy = "created_at"
     search_fields = ("filename", "id", "fingerprint", "uploaded_by__email")

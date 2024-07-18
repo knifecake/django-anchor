@@ -1,6 +1,6 @@
 from PIL import Image
 
-from attachments.models.fields import VariantFieldFile
+from anchor.models.fields import VariantFieldFile
 
 
 class BaseTransformer:

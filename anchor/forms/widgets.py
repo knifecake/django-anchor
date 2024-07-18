@@ -7,4 +7,4 @@ class ClearableBlobInput(ClearableFileInput):
 
 
 class AdminBlobInput(ClearableBlobInput):
-    template_name = "attachments/widgets/admin_blob_input.html"
+    template_name = "anchor/widgets/admin_blob_input.html"

@@ -8,15 +8,15 @@ from django.core.files import File as DjangoFile
 from django.core.files.base import ContentFile
 from django.db import models
 
-from attachments.models.attachment import Attachment
-from attachments.models.fields import (
+from anchor.models.attachment import Attachment
+from anchor.models.fields import (
     DEFAULT_CONTENT_TYPE,
     VariantFieldFile,
     VariantFileField,
 )
-from attachments.models.base import BaseModel
+from anchor.models.base import BaseModel
 
-logger = logging.getLogger("attachments")
+logger = logging.getLogger("anchor")
 
 
 class BlobQuerySet(models.QuerySet):
@@ -59,7 +59,7 @@ class BlobQuerySet(models.QuerySet):
 def _attachment_upload_to(instance, filename: str):
     filename = os.path.basename(filename)
     return datetime.datetime.now().strftime(
-        str(f"attachments/blobs/%Y/%m/%d/{instance.pk}_{filename}")
+        str(f"anchor/blobs/%Y/%m/%d/{instance.pk}_{filename}")
     )
 
 

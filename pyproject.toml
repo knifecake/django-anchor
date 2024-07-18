@@ -1,10 +1,11 @@
 [tool.poetry]
-name = "django-attachments"
+name = "django-anchor"
 version = "0.1.0"
 description = "Attach files to Django models"
 authors = ["Elias Hernandis <elias@hernandis.me>"]
 license = "MIT"
 readme = "README.md"
+packages = [{include = "anchor"}]
 
 [tool.poetry.dependencies]
 python = "^3.12"

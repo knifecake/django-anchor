@@ -1,5 +1,5 @@
 from django.db import models
-from attachments.models.fields import BlobField
+from anchor.models.fields import BlobField
 
 
 class Movie(models.Model):

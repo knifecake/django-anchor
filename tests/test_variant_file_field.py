@@ -4,8 +4,8 @@ from django.conf import settings
 from django.test import TestCase
 from django.test.testcases import SimpleTestCase
 
-from attachments.models import Blob
-from attachments.models.fields import VariantFieldFile
+from anchor.models import Blob
+from anchor.models.fields import VariantFieldFile
 
 
 class TestVariantFieldFile(SimpleTestCase):

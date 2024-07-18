@@ -1,6 +1,6 @@
-# Django Attachments
+# Django Anchor
 
-[![Test](https://github.com/knifecake/django-attachments/actions/workflows/test.yml/badge.svg)](https://github.com/knifecake/django-attachments/actions/workflows/test.yml)
+[![Test](https://github.com/knifecake/django-anchor/actions/workflows/test.yml/badge.svg)](https://github.com/knifecake/django-anchor/actions/workflows/test.yml)
 
 A reusable Django app to handle files attached to models, inspired by Ruby on
 Rails' excellent [Active
@@ -13,7 +13,7 @@ Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
 - **Optimized storage.** Deduplicates files for optimized storage
 - **Display files in templates.** Render resized thumbnails and optimized
   versions of your images in templates via a template tag.
-- **Reduce external dependencies.** Django attachments doesn't need any external
+- **Reduce external dependencies.** Django anchor doesn't need any external
   services and works Django's local file storage.
 
 ### Limitations
@@ -49,7 +49,7 @@ The easiest way to add a file to a model is to add a `BlobField` to it:
 
 ```python
 from django.db import models
-from attachments.models.fields import BlobField
+from anchor.models.fields import BlobField
 
 
 class Movie(models.Model):
@@ -71,11 +71,11 @@ changes you need to generate a migration with `python manage.py makemigrations`
 and then apply it via `python manage.py migrate`.
 
 Once your migrations are applied you can assign an
-`attachments.models.blob.Blob` object to a `BlobField` much like you'd assign a
+`anchor.models.blob.Blob` object to a `BlobField` much like you'd assign a
 `DjangoFile` object to a `FileField`:
 
 ```python
-from attachments.models.blob import Blob
+from anchor.models.blob import Blob
 
 # A new Blob objects is created and saved to the database with the file metadata
 cover = Blob.objects.from_url('...')
@@ -87,10 +87,10 @@ movie.save()
 
 ### Using files in templates
 
-Django attachments comes with a handy template tag to render URLs of files you've stored:
+Django anchor comes with a handy template tag to render URLs of files you've stored:
 
 ```
-{% load attachments %}
+{% load anchor %}
 <img src="{% blob_thumbnail movie.poster max_width=300 max_height=600 format='jpeg' %}">
 ```
 

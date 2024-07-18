@@ -2,7 +2,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 
-from attachments.models.base import BaseModel
+from anchor.models.base import BaseModel
 
 
 class AttachmentQuerySet(models.QuerySet):
@@ -23,7 +23,7 @@ class Attachment(BaseModel):
     objects = AttachmentQuerySet.as_manager()
 
     blob = models.ForeignKey(
-        "attachments.Blob",
+        "anchor.Blob",
         on_delete=models.PROTECT,
         related_name="attachments",
         null=True,

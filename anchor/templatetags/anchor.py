@@ -2,8 +2,8 @@ import logging
 
 from django import template
 
-from attachments.models import Blob
-from attachments.models.fields import VariantFieldFile
+from anchor.models import Blob
+from anchor.models.fields import VariantFieldFile
 
 register = template.Library()
 logger = logging.getLogger("attachments")

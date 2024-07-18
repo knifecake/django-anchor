@@ -3,7 +3,7 @@ import os
 from django.conf import settings
 from django.test import TestCase, tag
 
-from attachments.models import Blob
+from anchor.models import Blob
 
 
 class TestBlobModel(TestCase):

@@ -1,0 +1,24 @@
+{% load anchor %}
+<div style="display: flex; flex-wrap: wrap; gap: 0.5rem">
+    <div>
+        {% if widget.is_initial %}
+        {% if widget.value.is_image %}
+        <img style="max-width: 200px; max-height: 200px; object-fit: contain;" src="{% blob_thumbnail widget.value %}">
+        {% else %}
+        {{ widget.initial_text }}: <a href="{{ widget.value.url }}">{{ widget.value }}</a>
+        {% endif %}
+        {% endif %}
+    </div>
+    <div>
+        {% if not widget.required and widget.is_initial %}
+        <div>
+            <div style="display: flex; align-items: center; gap: 0.25em">
+                <input type="checkbox" {% if widget.attrs.disabled %} disabled{% endif %}
+                    name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+                <label for="{{ widget.checkbox_id }}">{{ widget.clear_checkbox_label }}</label>
+            </div>
+        </div>
+        {% endif %}
+        <input type="{{ widget.type }}" name="{{ widget.name }}" {% include "django/forms/widgets/attrs.html" %}>
+    </div>
+</div>

@@ -9,7 +9,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.contenttypes",
     "tests",
-    "attachments",
+    "anchor",
 ]
 
 DATABASES = {

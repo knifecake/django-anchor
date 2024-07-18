@@ -1,6 +1,6 @@
 from django import forms
 
-from attachments.models.blob import Blob
+from anchor.models.blob import Blob
 
 from .widgets import ClearableBlobInput
 

@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.conf import settings
 import os
-from attachments.models.blob import Blob
-from attachments.templatetags.attachments import blob as blob_tag
-from attachments.templatetags.attachments import blob_thumbnail as blob_thumbnail_tag
+from anchor.models.blob import Blob
+from anchor.templatetags.anchor import blob as blob_tag
+from anchor.templatetags.anchor import blob_thumbnail as blob_thumbnail_tag
 
 
 class TestBlobTag(TestCase):
