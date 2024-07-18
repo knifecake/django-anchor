@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+
 from .models import Movie
 from anchor.admin import AttachmentInline, BlobFieldMixin
 

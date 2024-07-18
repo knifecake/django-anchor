@@ -7,7 +7,7 @@ Installation
 
        pip install django-anchor
 
-   or by adding `django-anchor` to your ``requirements.txt`` file if you hae
+   or by adding ``django-anchor`` to your ``requirements.txt`` file if you have
    one.
 
 2. Add  ``anchor`` to ``settings.INSTALLED_APPS``
