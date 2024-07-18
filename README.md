@@ -2,6 +2,9 @@
 
 [![Test](https://github.com/knifecake/django-anchor/actions/workflows/test.yml/badge.svg)](https://github.com/knifecake/django-anchor/actions/workflows/test.yml)
 
+[![Documentation Status](https://readthedocs.org/projects/django-anchor/badge/?version=latest)](https://django-anchor.readthedocs.io/en/latest/?badge=latest)
+
+
 A reusable Django app to handle files attached to models, inspired by Ruby on
 Rails' excellent [Active
 Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
@@ -37,11 +40,20 @@ Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
 
 ## Installation
 
-TODO
+1. Add the `django-anchor` package to your dependencies. You can do this by
+   running:
+
+       pip install django-anchor
+
+   or by adding `django-anchor` to your `requirements.txt` or `pyproject.toml`
+   files if you have one.
+
+2. Add  `anchor` to `settings.INSTALLED_APPS`
+
 
 ## Usage
 
-💡 Check out the [demo](./demo/) Django project for inspiration.
+💡 Check out the [demo](./demo/) Django project for inspiration and the [Getting Started guide](https://django-anchor.readthedocs.io/en/latest/getting_started.html) in the documentation.
 
 ### Adding files to models
 
