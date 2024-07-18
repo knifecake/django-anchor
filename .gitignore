@@ -1,7 +1,8 @@
 __pycache__
+.coverage
+.DS_Store
 .ruff_cache
 *.sqlite3
 demo/media
+docs/build
 tmp
-.DS_Store
-.coverage

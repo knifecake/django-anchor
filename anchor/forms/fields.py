@@ -6,6 +6,12 @@ from .widgets import ClearableBlobInput
 
 
 class BlobField(forms.FileField):
+    """
+    A form field for uploading a file and storing it as a Blob.
+
+    This field is intended to replace the default Django FileField in forms.
+    """
+
     widget = ClearableBlobInput
 
     def __init__(self, *args, **kwargs):

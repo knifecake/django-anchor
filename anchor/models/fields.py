@@ -19,6 +19,11 @@ mimetypes.add_type("image/webp", ".webp")
 
 
 class VariantFieldFile(FieldFile):
+    """
+    A replacement for Django's FieldFile that works with BlobField to support
+    variant generation.
+    """
+
     def get_variant(self, blocking=False, **format_params):
         """
         Returns a variant of this file with the transformations specified by the
@@ -176,10 +181,22 @@ class VariantFieldFile(FieldFile):
 
 
 class VariantFileField(FileField):
+    """
+    A replacement for Django's FileField that works with VariantFieldFiles to
+    support variant generation.
+    """
+
     attr_class = VariantFieldFile
 
 
 class BlobField(models.ForeignKey):
+    """
+    Attach a Blob to a model.
+
+    This field is intended to replace the default Django FileField or ImageField
+    in models.
+    """
+
     def __init__(
         self,
         on_delete=models.SET_NULL,

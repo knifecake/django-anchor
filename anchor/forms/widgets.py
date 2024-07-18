@@ -2,6 +2,11 @@ from django.forms.widgets import ClearableFileInput
 
 
 class ClearableBlobInput(ClearableFileInput):
+    """
+    Replacement for Django's ClearableFileInput widget that works with
+    BlobFields.
+    """
+
     # make this widget work with the Django admin
     choices = []
 

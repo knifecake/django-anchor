@@ -41,9 +41,9 @@ class PillowImageTransformer(BaseTransformer):
     -----------------
     format : str or Tuple[str, Dict[str, Any]]
         Format in which to save the image. When this parameter is a tuple, the
-        first argument is the format identifier, such as `webp` and the second
+        first argument is the format identifier, such as ``webp`` and the second
         is a dictionary of options. They are both used to call
-        PIL.Image.save(format[0], **format[1]). If the parameter is just a
+        ``PIL.Image.save(format[0], **format[1])``. If the parameter is just a
         string, the second element of the tuple defaults to an empty dictionary
         so the Pillow defaults are used.
 
@@ -52,7 +52,7 @@ class PillowImageTransformer(BaseTransformer):
 
     thumbnail : Tuple[int, int]
         Resizes the image to fit inside a box of the provided dimensions using
-        PIL.Image.thumbnail. The resized version is never larger than the
+        ``PIL.Image.thumbnail``. The resized version is never larger than the
         original image.
 
     """
