@@ -29,12 +29,6 @@ jobs:
         run: |
           python -m poetry config virtualenvs.in-project true
 
-      - name: Cache the virtualenv
-        uses: actions/cache@v2
-        with:
-          path: ./.venv
-          key: ${{ runner.os }}-venv-${{ hashFiles('**/poetry.lock') }}
-
       - name: Validate the structure of the pyproject.toml
         run: |
           poetry check
