@@ -31,11 +31,11 @@ Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
 
 ### Future work
 
-- [ ] Reduce number of dependencies:
-    - [ ] Make Huey dependency optional
-    - [ ] Make PIL dependency optional
 - [ ] Remove dependency on `base58`
 - [ ] Implement private file links (maybe via signed URLs?)
+- [ ] Support for async/delayed variant generation
+- [ ] Reduce number of dependencies:
+    - [ ] Make PIL dependency optional
 
 ## Installation
 
