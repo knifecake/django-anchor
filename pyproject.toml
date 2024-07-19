@@ -18,7 +18,7 @@ classifiers = [
 "Bug Tracker" = "https://github.com/knifecake/django-anchor/issues"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.10,<4"
 django = "^5.0.7"
 huey = "^2.5.1"
 base58 = "^2.1.1"
