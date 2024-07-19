@@ -1,7 +1,6 @@
 # Django Anchor
 
 [![Test](https://github.com/knifecake/django-anchor/actions/workflows/test.yml/badge.svg)](https://github.com/knifecake/django-anchor/actions/workflows/test.yml)
-
 [![Documentation Status](https://readthedocs.org/projects/django-anchor/badge/?version=latest)](https://django-anchor.readthedocs.io/en/latest/?badge=latest)
 
 
@@ -40,6 +39,8 @@ Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
 
 ## Installation
 
+Django-anchor is compatible with Django >= 4.2 and Python >= 3.10.
+
 1. Add the `django-anchor` package to your dependencies. You can do this by
    running:
 
@@ -49,6 +50,9 @@ Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
    files if you have one.
 
 2. Add  `anchor` to `settings.INSTALLED_APPS`
+
+In addition, if you wish to create image variants, a Pillow >= 8.4 should be
+available in your system.
 
 
 ## Usage
