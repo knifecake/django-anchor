@@ -70,3 +70,37 @@ jobs:
       - name: Run tests
         run: |
           poetry run python runtests.py
+
+  pillow_compatibility_test:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 4
+      matrix:
+        pillow-version: ["8.4.0", "9.5.0", "10.0.0"]
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v3
+        with:
+          python-version: 3.10
+
+      - name: Install poetry
+        run: |
+          python -m pip install poetry==1.8.3
+
+      - name: Configure poetry
+        run: |
+          python -m poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        run: |
+          poetry install --no-root
+
+      - name: Install Django ${{ matrix.django-version }}
+        run: |
+          poetry add "Django==${{ matrix.django-version }}"
+
+      - name: Run tests
+        run: |
+          poetry run python runtests.py
