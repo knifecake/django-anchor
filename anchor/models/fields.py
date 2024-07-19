@@ -1,4 +1,3 @@
-import base58
 import hashlib
 import mimetypes
 import os
@@ -9,6 +8,7 @@ from django.db import models
 from django.db.models.fields.files import FieldFile, FileField
 from django.utils.functional import cached_property
 
+from anchor.utils.base58 import b58encode
 
 DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
@@ -107,7 +107,7 @@ class VariantFieldFile(FieldFile):
         h2 = hashlib.sha1(h1.encode("utf8"))
 
         # encode to save characters in the filename
-        suffix = base58.b58encode(h2.digest()).decode()[:-1]
+        suffix = b58encode(h2.digest()).decode()[:-1]
 
         # append extension to help proxy servers identify the mime type
         _, ext = os.path.splitext(self.file.name)
