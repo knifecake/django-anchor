@@ -9,7 +9,6 @@ from django.db import models
 from django.db.models.fields.files import FieldFile, FileField
 from django.utils.functional import cached_property
 
-from anchor.tasks import blob_make_variant
 
 DEFAULT_CONTENT_TYPE = "application/octet-stream"
 
@@ -41,8 +40,9 @@ class VariantFieldFile(FieldFile):
 
         if blocking:
             return self.make_variant(variant_name, format_params)
-
-        blob_make_variant(self, variant_name, format_params)
+        else:
+            # TODO: implement async variant generation
+            return self.make_variant(variant_name, format_params)
 
     def get_variant_url(self, fallback=False, blocking=False, **format_params):
         """

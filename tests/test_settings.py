@@ -34,7 +34,3 @@ TIME_ZONE = "UTC"
 
 MEDIA_ROOT = os.path.join("tmp")
 STATIC_ROOT = os.path.join("tmp")
-
-HUEY = {
-    "immediate": True,
-}
