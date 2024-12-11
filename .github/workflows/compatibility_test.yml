@@ -57,7 +57,7 @@ jobs:
 
       - name: Install Django ${{ matrix.django-version }}
         run: |
-          uv add "Django==${{ matrix.django-version }}"
+          uv add "django==${{ matrix.django-version }}" --frozen
 
       - name: Run tests
         run: |
@@ -87,7 +87,7 @@ jobs:
 
       - name: Install Pillow ${{ matrix.pillow-version }}
         run: |
-          uv add "Pillow==${{ matrix.pillow-version }}"
+          uv add "pillow==${{ matrix.pillow-version }}" --frozen
 
       - name: Run tests
         run: |
