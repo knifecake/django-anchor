@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install poetry
+      - name: Install UV
         run: |
           python -m pip install uv==0.5.8
 
@@ -47,7 +47,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install poetry
+      - name: Install UV
         run: |
           python -m pip install uv==0.5.8
 
@@ -77,7 +77,7 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install poetry
+      - name: Install UV
         run: |
           python -m pip install uv==0.5.8
 
