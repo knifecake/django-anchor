@@ -1,42 +1,40 @@
-[tool.poetry]
+[project]
 name = "django-anchor"
-version = "0.3.0"
+dynamic = ["version"]
 description = "Attach files to Django models"
-authors = ["Elias Hernandis <elias@hernandis.me>"]
-license = "MIT"
 readme = "README.md"
-packages = [{include = "anchor"}]
-homepage = "https://github.com/knifecake/django-anchor"
-repository = "https://github.com/knifecake/django-anchor"
-documentation = "https://django-anchor.readthedocs.io/en/latest/"
+authors = [
+    { name = "Elias Hernandis", email = "elias@hernandis.me" }
+]
+license = { name = "MIT", file = "LICENSE.md" }
+requires-python = ">=3.10"
 keywords = ["django", "files", "attachments"]
 classifiers = [
     "Framework :: Django",
     "Framework :: Django :: 4.2",
     "Framework :: Django :: 5.0",
     "Framework :: Django :: 5.1",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Operating System :: OS Independent",
     "License :: OSI Approved :: MIT License",
     "Natural Language :: English",
     "Topic :: File Formats",
     "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
 ]
+dependencies = [
+    "django>=4.2,<6",
+    "pillow>=9.5,<12",
+]
 
-[tool.poetry.urls]
-"Bug Tracker" = "https://github.com/knifecake/django-anchor/issues"
-
-[tool.poetry.dependencies]
-python = ">=3.10,<4"
-django = ">=4.2,<6"
-pillow = "^10.4.0"
-
-
-[tool.poetry.group.dev.dependencies]
-pre-commit = "^3.7.1"
-coverage = "^7.6.0"
-sphinx = "^7.4.5"
-toml = "^0.10.2"
-
+[project.urls]
+Homepage = "https://github.com/knifecake/django-anchor"
+Source = "https://github.com/knifecake/django-anchor"
+Documentation = "https://django-anchor.readthedocs.io/en/latest/"
+Tracker = "https://github.com/knifecake/django-anchor/issues"
+Releases = "https://github.com/knifecake/django-anchor/releases"
 
 [tool.ruff]
 line-length = 88
@@ -44,5 +42,19 @@ indent-width = 4
 target-version = "py312"
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[dependency-groups]
+dev = [
+    "coverage>=7.6.9",
+    "pre-commit>=4.0.1",
+    "sphinx>=8.1.3",
+    "toml>=0.10.2",
+]
+
+[tool.setuptools]
+packages = ["anchor"]
+
+[tool.setuptools.dynamic]
+version = {attr = "anchor.__version__"}

@@ -7,3 +7,5 @@ demo/media
 docs/_build
 tmp
 dist/
+*.egg-info
+.venv
