@@ -68,7 +68,7 @@ jobs:
     strategy:
       max-parallel: 4
       matrix:
-        pillow-version: ["8.4.0", "9.5.0", "10.0.0"]
+        pillow-version: ["9.5.0", "10.4.0", "11.0.0"]
 
     steps:
       - uses: actions/checkout@v4
