@@ -2,7 +2,7 @@ from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 from django.utils import timezone
 
-from anchor.models.blob import Blob
+from anchor.models import Blob
 
 
 class AnchorFileSystemStorage(FileSystemStorage):

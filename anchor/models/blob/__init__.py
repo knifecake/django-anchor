@@ -1,1 +1,1 @@
-from .blob import Blob  # noqa: F401
+from . import blob  # noqa: F401

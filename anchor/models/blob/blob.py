@@ -3,21 +3,19 @@ import hashlib
 import logging
 import mimetypes
 import os
-import urllib
 from secrets import token_bytes
 from typing import Optional
 
 from django.core.files import File as DjangoFile
-from django.core.files.base import ContentFile
 from django.core.files.storage import Storage, storages
 from django.db import models
 
-from anchor.models.attachment import Attachment
 from anchor.models.base import BaseModel
 from anchor.models.blob.signing import AnchorSigner
-from anchor.models.fields import DEFAULT_MIME_TYPE
 
 logger = logging.getLogger("anchor")
+
+DEFAULT_MIME_TYPE = "application/octet-stream"
 
 
 class BlobQuerySet(models.QuerySet):
@@ -25,40 +23,8 @@ class BlobQuerySet(models.QuerySet):
         key = self.model._get_signer().unsign(signed_id)
         return self.get(key=key)
 
-    def create_and_attach(self, object=None, name=None, order=0, **kwargs):
-        blob = super().create(**kwargs)
-        Attachment.objects.create(
-            blob=blob, content_object=object, order=order, name=name
-        )
-        return blob
-
-    def from_url(self, url: str, **kwargs):
-        """
-        Downloads the file at the given URL and returns a Blob wrapping it.
-
-        The Blob is persisted to the database but if there exists a blob with
-        the same fingerprint, the existing one is reused.
-        """
-
-        with urllib.request.urlopen(url) as fp:
-            contents = fp.read()
-            blob = self.model.from_file(
-                ContentFile(contents), filename=os.path.basename(url), **kwargs
-            )
-            blob.save()
-            return blob
-
-    def from_path(self, path: str, **kwargs):
-        """
-        Opens the file at the given ``path`` and returns a Blob wrapping it.
-
-        The Blob is persisted to the database but if there exists a blob with
-        the same fingerprint, the existing one is reused.
-        """
-        with open(path, mode="rb") as fp:
-            blob = self.model.from_file(fp, **kwargs)
-            blob.save()
-            return blob
+    def unattached(self):
+        return self.filter(attachments__isnull=True)
 
     def create(self, file: Optional[DjangoFile] = None, **kwargs):
         blob = super().create(**kwargs)
@@ -117,13 +83,16 @@ class Blob(BaseModel):
         verbose_name="metadata",
     )
 
-    def __init__(self, *args, prefix=None, **kwargs):
+    def __init__(self, *args, prefix=None, backend=None, **kwargs):
         super().__init__(*args, **kwargs)
         if self.key == "":
             self.key = self.generate_key()
 
         if prefix is not None:
             self.prefix = prefix
+
+        if backend is not None:
+            self.backend = backend
 
     @property
     def signed_id(self):
@@ -223,3 +192,6 @@ class Blob(BaseModel):
     @property
     def is_image(self):
         return self.mime_type.startswith("image/")
+
+    def purge(self):
+        self.service.delete(self.key)

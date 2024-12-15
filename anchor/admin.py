@@ -1,12 +1,10 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
-from django.contrib.contenttypes.admin import GenericTabularInline
 from django.template.defaultfilters import filesizeformat
 from django.utils.html import format_html
 
-from anchor.models.attachment import Attachment
-from anchor.models.blob import Blob
+from anchor.models import Attachment, Blob
 
 
 class AdminBlobForm(forms.ModelForm):
@@ -78,28 +76,3 @@ class BlobAdmin(admin.ModelAdmin):
             return AdminBlobForm
 
         return super().get_form(request, obj, **kwargs)
-
-
-class AttachmentInline(GenericTabularInline):
-    """
-    Inline for Attachment model.
-
-    Add this to the admin.ModelAdmin.inlines attribute of the model you want to attach files to.
-    """
-
-    model = Attachment
-    extra = 0
-    fields = ("blob", "name", "order", "preview")
-    readonly_fields = ("preview",)
-    ordering = ("name", "order")
-    autocomplete_fields = ("blob",)
-
-    def preview(self, instance):
-        if instance.blob:
-            return format_html(
-                '<img src="{}" style="max-width: 100%">', instance.blob.file.url
-            )
-
-        return "-"
-
-    preview.short_description = "preview"

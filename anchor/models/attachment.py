@@ -5,15 +5,6 @@ from django.db import models
 from anchor.models.base import BaseModel
 
 
-class AttachmentQuerySet(models.QuerySet):
-    def filter_by_object(self, object, name="attachments"):
-        """
-        Filter attachments by object and name.
-        """
-        content_type = ContentType.objects.get_for_model(object)
-        return self.filter(content_type=content_type, object_id=object.pk, name=name)
-
-
 class Attachment(BaseModel):
     class Meta:
         constraints = (
@@ -22,8 +13,6 @@ class Attachment(BaseModel):
                 name="unique_attachment_per_blob_and_object_and_name",
             ),
         )
-
-    objects = AttachmentQuerySet.as_manager()
 
     blob = models.ForeignKey(
         "anchor.Blob",
