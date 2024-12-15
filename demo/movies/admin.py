@@ -1,12 +1,12 @@
 from django.contrib import admin
 
+from anchor.admin import AttachmentInline
 
 from .models import Movie
-from anchor.admin import AttachmentInline, BlobFieldMixin
 
 
 @admin.register(Movie)
-class MovieAdmin(BlobFieldMixin, admin.ModelAdmin):
+class MovieAdmin(admin.ModelAdmin):
     inlines = [AttachmentInline]
     list_display = ["title"]
     search_fields = ["title"]

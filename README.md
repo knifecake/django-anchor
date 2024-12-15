@@ -3,7 +3,6 @@
 [![Test](https://github.com/knifecake/django-anchor/actions/workflows/test.yml/badge.svg)](https://github.com/knifecake/django-anchor/actions/workflows/test.yml)
 [![Documentation Status](https://readthedocs.org/projects/django-anchor/badge/?version=latest)](https://django-anchor.readthedocs.io/en/latest/?badge=latest)
 
-
 A reusable Django app to handle files attached to models, inspired by Ruby on
 Rails' excellent [Active
 Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
@@ -29,14 +28,6 @@ Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
 - It currently depends on [Huey](https://huey.readthedocs.io/en/latest/) for
   background processing.
 
-### Future work
-
-- [ ] Remove dependency on `base58`
-- [ ] Implement private file links (maybe via signed URLs?)
-- [ ] Support for async/delayed variant generation
-- [ ] Reduce number of dependencies:
-    - [ ] Make PIL dependency optional
-
 ## Installation
 
 Django-anchor is compatible with Django >= 4.2 and Python >= 3.10.
@@ -53,7 +44,6 @@ Django-anchor is compatible with Django >= 4.2 and Python >= 3.10.
 
 In addition, if you wish to create image variants, a Pillow >= 8.4 should be
 available in your system.
-
 
 ## Usage
 

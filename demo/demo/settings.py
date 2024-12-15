@@ -1,13 +1,16 @@
-from pathlib import Path
-import sys
 import os
+import sys
+from pathlib import Path
+
+import environ
 
 # Allow loading the attachments app from the parent directory
 sys.path.insert(0, os.path.abspath(".."))
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+env = environ.Env()
+environ.Env.read_env(os.path.join(BASE_DIR, "..", ".env"))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = "django-insecure-u6&7hx#0kn(h-rxlz2lghk$2f*z7c2(q5mebu2xkl6xi-c_x6^"
@@ -108,3 +111,23 @@ MEDIA_URL = "/media/"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+STORAGES = {
+    "default": {"BACKEND": "anchor.storage.AnchorFileSystemStorage"},
+    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+}
+
+if env("R2_ENDPOINT_URL", default=None):
+    STORAGES["r2-dev"] = {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            "bucket_name": "anchor-dev",
+            "endpoint_url": env("R2_ENDPOINT_URL"),
+            "access_key": env("R2_ACCESS_KEY"),
+            "secret_key": env("R2_SECRET_KEY"),
+            "max_memory_size": 10 * 1024 * 1024,  # 10 MB
+            "querystring_auth": True,
+            "querystring_expire": 600,
+            "signature_version": "s3v4",
+        },
+    }

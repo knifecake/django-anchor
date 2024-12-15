@@ -9,3 +9,4 @@ tmp
 dist/
 *.egg-info
 .venv
+.env
