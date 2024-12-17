@@ -131,3 +131,8 @@ if env("R2_ENDPOINT_URL", default=None):
             "signature_version": "s3v4",
         },
     }
+
+# Anchor
+ANCHOR = {
+    "DEFAULT_STORAGE": "default",
+}

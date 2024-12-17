@@ -9,8 +9,8 @@ class Attachment(BaseModel):
     class Meta:
         constraints = (
             models.constraints.UniqueConstraint(
-                fields=("content_type", "object_id", "blob", "name"),
-                name="unique_attachment_per_blob_and_object_and_name",
+                fields=("content_type", "object_id", "name", "order"),
+                name="unique_attachment_per_content_type_and_object_and_name_and_order",
             ),
         )
 
@@ -34,3 +34,7 @@ class Attachment(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.name} {self.order}"
+
+    @property
+    def url(self):
+        return self.blob.url

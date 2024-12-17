@@ -1,7 +1,8 @@
+from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.base import File
+from django.db import models
 from django.db.models import Model
-from django.db.models.fields.related import RelatedField
 
 from anchor.models import Attachment, Blob
 
@@ -30,57 +31,57 @@ class ReverseSingleAttachmentDescriptor:
             value.name = self.name
             value.order = 0
             value.save()
-        elif isinstance(value, Blob):
-            Attachment.objects.update_or_create(
-                object_id=instance.id,
-                content_type=ContentType.objects.get_for_model(instance),
-                name=self.name,
-                order=0,
-                defaults={"blob": value},
-            )
+
+        if isinstance(value, Blob):
+            blob = value
         elif isinstance(value, File):
-            Attachment.objects.create(
-                object_id=instance.id,
-                content_type=ContentType.objects.get_for_model(instance),
-                blob=Blob.objects.create(
-                    file=value, backend=self.backend, prefix=self.prefix
-                ),
-                name=self.name,
-                order=0,
+            blob = Blob.objects.create(
+                file=value, backend=self.backend, prefix=self.prefix
             )
         else:
             raise ValueError(f"Invalid value type: {type(value)}")
 
+        Attachment.objects.update_or_create(
+            object_id=instance.id,
+            content_type=ContentType.objects.get_for_model(instance),
+            name=self.name,
+            order=0,
+            defaults={"blob": blob},
+        )
 
-class SingleAttachmentField(RelatedField):
-    # Field flags
-    many_to_many = False
-    many_to_one = False
-    one_to_many = False
-    one_to_one = True
 
+class SingleAttachmentField(GenericRelation):
     def __init__(self, prefix: str = None, backend: str = None, **kwargs):
         self.prefix = prefix
         self.backend = backend
-        super().__init__(
-            related_name=None,
-            related_query_name=None,
-            limit_choices_to=None,
-            editable=False,
+        self.object_id_field_name = "object_id"
+        self.content_type_field_name = "content_type"
+        self.for_concrete_model = True
+
+        # Bypass the GenericRelation constructor to be able to set editable=True
+        super(GenericRelation, self).__init__(
+            to="anchor.Attachment",
+            related_name="+",
+            related_query_name="+",
+            editable=True,
             serialize=False,
+            from_fields=[],
+            to_fields=[],
+            null=True,
+            blank=True,
+            rel=self.rel_class(
+                self,
+                to="anchor.Attachment",
+                related_name="+",
+                related_query_name="+",
+                limit_choices_to=None,
+            ),
             **kwargs,
+            on_delete=models.CASCADE,
         )
 
-    def resolve_related_fields(self):
-        self.to_fields = [self.model._meta.pk.name]
-        return [
-            (
-                self.remote_field.model._meta.get_field("object_id"),
-                self.model._meta.pk,
-            )
-        ]
-
     def contribute_to_class(self, cls: type[Model], name: str, **kwargs) -> None:
+        super().contribute_to_class(cls, name, **kwargs)
         setattr(
             cls,
             name,
@@ -89,8 +90,10 @@ class SingleAttachmentField(RelatedField):
             ),
         )
 
-    def contribute_to_related_class(self, cls, related):
-        pass
+    def formfield(self, **kwargs):
+        from django.forms import FileField
+
+        return FileField(**kwargs)
 
 
 """

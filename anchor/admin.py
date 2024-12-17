@@ -13,10 +13,17 @@ class AdminBlobForm(forms.ModelForm):
         fields = []
 
     backend = forms.ChoiceField(
-        choices=[(k, k) for k in settings.STORAGES.keys()], initial="default"
+        choices=[
+            (k, k)
+            for k, v in settings.STORAGES.items()
+            if v["BACKEND"] != "django.contrib.staticfiles.storage.StaticFilesStorage"
+        ],
+        initial="default",
     )
     file = forms.FileField()
-    prefix = forms.CharField(required=False)
+    prefix = forms.CharField(
+        required=False, help_text="The folder where to store the blob into"
+    )
 
     def save(self, commit=True):
         blob = Blob(
@@ -33,7 +40,7 @@ class AdminBlobForm(forms.ModelForm):
 
 @admin.register(Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
-    list_display = ("blob", "name", "content_type", "content_object")
+    list_display = ("blob", "name", "order", "content_type", "object_id")
     raw_id_fields = ("blob",)
 
     def get_queryset(self, request):
@@ -56,9 +63,23 @@ class BlobAdmin(admin.ModelAdmin):
         "filename",
         "mime_type",
         "byte_size",
+        "human_size",
         "checksum",
         "preview",
         "key",
+    )
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("key",),
+                    ("filename",),
+                    ("mime_type", "human_size", "checksum"),
+                    ("preview",),
+                )
+            },
+        ),
     )
 
     @admin.display(description="Size", ordering="byte_size")
@@ -67,7 +88,9 @@ class BlobAdmin(admin.ModelAdmin):
 
     def preview(self, instance: Blob):
         if instance.is_image and instance.url:
-            return format_html('<img src="{}" style="max-width: 100%">', instance.url)
+            return format_html(
+                '<img src="{}" style="max-width: calc(min(100%, 450px))">', instance.url
+            )
 
         return "-"
 
@@ -76,3 +99,17 @@ class BlobAdmin(admin.ModelAdmin):
             return AdminBlobForm
 
         return super().get_form(request, obj, **kwargs)
+
+    def get_readonly_fields(self, request, obj=None):
+        if obj is None:
+            return []
+
+        return super().get_readonly_fields(request, obj)
+
+    def get_fieldsets(self, request, obj=None):
+        if obj is None:
+            return [
+                (None, {"fields": ("backend", "file", "prefix")}),
+            ]
+
+        return super().get_fieldsets(request, obj)

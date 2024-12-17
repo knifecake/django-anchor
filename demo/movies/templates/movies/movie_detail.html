@@ -1,0 +1,14 @@
+{% extends "movies/base.html" %}
+
+{% block body %}
+<h1>{{ movie.title }}</h1>
+
+
+<img src="{{ movie.cover.url }}" alt="{{ movie.title }}" style="max-width: calc(min(100%, 450px))">
+
+<p>
+    <a href="{% url 'movies:movie_update' movie.pk %}">
+        Update
+    </a>
+</p>
+{% endblock %}
