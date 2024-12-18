@@ -22,7 +22,7 @@ class ReverseSingleAttachmentDescriptor:
             content_type=ContentType.objects.get_for_model(instance),
             name=self.name,
             order=0,
-        ).first()
+        ).get()
 
     def __set__(self, instance, value):
         if isinstance(value, Attachment):
@@ -31,6 +31,7 @@ class ReverseSingleAttachmentDescriptor:
             value.name = self.name
             value.order = 0
             value.save()
+            return
 
         if isinstance(value, Blob):
             blob = value
@@ -39,7 +40,9 @@ class ReverseSingleAttachmentDescriptor:
                 file=value, backend=self.backend, prefix=self.prefix
             )
         else:
-            raise ValueError(f"Invalid value type: {type(value)}")
+            raise ValueError(
+                f"Invalid value type {type(value)}. Provide a File, a Blob or an Attachment."
+            )
 
         Attachment.objects.update_or_create(
             object_id=instance.id,
@@ -58,17 +61,17 @@ class SingleAttachmentField(GenericRelation):
         self.content_type_field_name = "content_type"
         self.for_concrete_model = True
 
+        kwargs["null"] = True
+        kwargs["related_name"] = "+"
+        kwargs["related_query_name"] = "+"
+        kwargs["on_delete"] = models.CASCADE
+        kwargs["to_fields"] = []
+        kwargs["from_fields"] = []
+        kwargs["serialize"] = False
+
         # Bypass the GenericRelation constructor to be able to set editable=True
         super(GenericRelation, self).__init__(
             to="anchor.Attachment",
-            related_name="+",
-            related_query_name="+",
-            editable=True,
-            serialize=False,
-            from_fields=[],
-            to_fields=[],
-            null=True,
-            blank=True,
             rel=self.rel_class(
                 self,
                 to="anchor.Attachment",
@@ -77,7 +80,6 @@ class SingleAttachmentField(GenericRelation):
                 limit_choices_to=None,
             ),
             **kwargs,
-            on_delete=models.CASCADE,
         )
 
     def contribute_to_class(self, cls: type[Model], name: str, **kwargs) -> None:
@@ -91,6 +93,10 @@ class SingleAttachmentField(GenericRelation):
         )
 
     def formfield(self, **kwargs):
-        from django.forms import FileField
+        from django.forms import ClearableFileInput, FileField
 
-        return FileField(**kwargs)
+        print(kwargs)
+        defaults = {"required": not self.blank, "widget": ClearableFileInput}
+        defaults.update(kwargs)
+
+        return FileField(**defaults)
