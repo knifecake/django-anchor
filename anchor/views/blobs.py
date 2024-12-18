@@ -1,12 +1,13 @@
-from django.views import View
-from django.http.response import HttpResponseRedirect
-from anchor.models import Blob
 from django.core.signing import BadSignature
 from django.http import Http404
+from django.http.response import HttpResponseRedirect
+from django.views import View
+
+from anchor.models import Blob
 
 
 class BlobRedirectView(View):
-    def get(self, request, signed_id):
+    def get(self, request, signed_id, filename=None):
         blob = self.get_blob(signed_id)
         return HttpResponseRedirect(blob.url)
 

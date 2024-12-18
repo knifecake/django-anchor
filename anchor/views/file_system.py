@@ -7,7 +7,7 @@ from anchor.models import Blob
 
 
 class BlobFileSystemView(View):
-    def get(self, request, signed_key):
+    def get(self, request, signed_key, filename=None):
         blob = self.get_blob(signed_key)
         try:
             response = FileResponse(

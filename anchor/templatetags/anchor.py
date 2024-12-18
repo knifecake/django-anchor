@@ -8,4 +8,7 @@ register = template.Library()
 
 @register.simple_tag
 def blob_url(value: Blob | Attachment):
-    return reverse("anchor:blob", kwargs={"signed_id": value.signed_id})
+    return reverse(
+        "anchor:blob",
+        kwargs={"signed_id": value.signed_id, "filename": value.filename},
+    )

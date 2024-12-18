@@ -1,3 +1,5 @@
+import os
+
 from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 
@@ -12,6 +14,7 @@ class AnchorFileSystemStorage(FileSystemStorage):
             kwargs={
                 "signed_key": Blob._get_signer().sign(
                     name, expires_in=anchor_settings.FILE_SYSTEM_BACKEND_EXPIRATION
-                )
+                ),
+                "filename": os.path.basename(name),
             },
         )

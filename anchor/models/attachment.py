@@ -45,3 +45,7 @@ class Attachment(BaseModel):
     @property
     def signed_id(self):
         return self.blob.signed_id
+
+    @property
+    def filename(self):
+        return self.blob.filename
