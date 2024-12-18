@@ -5,25 +5,14 @@ from django.db import models
 from anchor.models.base import BaseModel
 
 
-class AttachmentQuerySet(models.QuerySet):
-    def filter_by_object(self, object, name="attachments"):
-        """
-        Filter attachments by object and name.
-        """
-        content_type = ContentType.objects.get_for_model(object)
-        return self.filter(content_type=content_type, object_id=object.pk, name=name)
-
-
 class Attachment(BaseModel):
     class Meta:
         constraints = (
             models.constraints.UniqueConstraint(
-                fields=("content_type", "object_id", "blob", "name"),
-                name="unique_attachment_per_blob_and_object_and_name",
+                fields=("content_type", "object_id", "name", "order"),
+                name="unique_attachment_per_content_type_and_object_and_name_and_order",
             ),
         )
-
-    objects = AttachmentQuerySet.as_manager()
 
     blob = models.ForeignKey(
         "anchor.Blob",
@@ -35,9 +24,12 @@ class Attachment(BaseModel):
     )
 
     content_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, verbose_name="content type"
+        ContentType,
+        on_delete=models.CASCADE,
+        verbose_name="content type",
+        db_index=False,
     )
-    object_id = models.CharField(db_index=True, max_length=22, verbose_name="object id")
+    object_id = models.CharField(max_length=64, verbose_name="object id")
     content_object = GenericForeignKey("content_type", "object_id")
 
     order = models.IntegerField(default=0, verbose_name="order")
@@ -45,3 +37,15 @@ class Attachment(BaseModel):
 
     def __str__(self) -> str:
         return f"{self.name} {self.order}"
+
+    @property
+    def url(self):
+        return self.blob.url
+
+    @property
+    def signed_id(self):
+        return self.blob.signed_id
+
+    @property
+    def filename(self):
+        return self.blob.filename

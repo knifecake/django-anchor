@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
-from anchor.utils.base58 import b58encode
+from anchor.support.base58 import b58encode
 
 
 def _gen_short_uuid():

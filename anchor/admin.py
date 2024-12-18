@@ -1,29 +1,46 @@
+from django import forms
+from django.conf import settings
 from django.contrib import admin
-from django.contrib.contenttypes.admin import GenericTabularInline
-from django.utils.html import format_html
-from anchor.models.fields import BlobField
-from anchor.forms.widgets import AdminBlobInput
-from anchor.models.attachment import Attachment
-from anchor.models.blob import Blob
 from django.template.defaultfilters import filesizeformat
+from django.utils.html import format_html
+
+from anchor.models import Attachment, Blob
 
 
-class BlobFieldMixin:
-    """
-    Render a preview of the blob in the admin form.
+class AdminBlobForm(forms.ModelForm):
+    class Meta:
+        model = Blob
+        fields = []
 
-    Inherit from this in your ModelAdmin class to render a preview of the blob
-    in the admin form.
-    """
+    backend = forms.ChoiceField(
+        choices=[
+            (k, k)
+            for k, v in settings.STORAGES.items()
+            if v["BACKEND"] != "django.contrib.staticfiles.storage.StaticFilesStorage"
+        ],
+        initial="default",
+    )
+    file = forms.FileField()
+    prefix = forms.CharField(
+        required=False, help_text="The folder where to store the blob into"
+    )
 
-    formfield_overrides = {
-        BlobField: {"widget": AdminBlobInput},
-    }
+    def save(self, commit=True):
+        blob = Blob(
+            prefix=self.cleaned_data["prefix"], backend=self.cleaned_data["backend"]
+        )
+
+        blob.upload(self.cleaned_data["file"])
+        blob.save()
+        return blob
+
+    def save_m2m(self):
+        pass
 
 
 @admin.register(Attachment)
 class AttachmentAdmin(admin.ModelAdmin):
-    list_display = ("blob", "name", "content_type", "content_object")
+    list_display = ("blob", "name", "order", "content_type", "object_id")
     raw_id_fields = ("blob",)
 
     def get_queryset(self, request):
@@ -36,54 +53,63 @@ class AttachmentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Blob)
-class BlobAdmin(BlobFieldMixin, admin.ModelAdmin):
+class BlobAdmin(admin.ModelAdmin):
     ordering = ("id",)
     date_hierarchy = "created_at"
-    search_fields = ("filename", "id", "fingerprint", "uploaded_by__email")
-    list_display = ("filename", "human_size", "uploaded_by", "created_at")
-    list_filter = ("mime_type",)
-    readonly_fields = ("filename", "byte_size", "fingerprint", "thumbnail")
-    raw_id_fields = ("uploaded_by",)
-
-    def save_model(self, request, obj, form, change):  # pragma: no cover
-        if not change:
-            obj.uploaded_by = request.user
-
-        super().save_model(request, obj, form, change)
+    search_fields = ("filename", "id", "checksum")
+    list_display = ("filename", "human_size", "backend", "created_at")
+    list_filter = ("backend", "mime_type")
+    readonly_fields = (
+        "filename",
+        "mime_type",
+        "byte_size",
+        "human_size",
+        "checksum",
+        "preview",
+        "key",
+    )
+    fieldsets = (
+        (
+            None,
+            {
+                "fields": (
+                    ("key",),
+                    ("filename",),
+                    ("mime_type", "human_size", "checksum"),
+                    ("preview",),
+                )
+            },
+        ),
+    )
 
     @admin.display(description="Size", ordering="byte_size")
     def human_size(self, instance: Blob):
         return filesizeformat(instance.byte_size)
 
-    def thumbnail(self, instance: Blob):
-        if instance.file and instance.file.is_image:
+    def preview(self, instance: Blob):
+        if instance.is_image and instance.url:
             return format_html(
-                '<img src="{}" style="max-width: 100%">', instance.file.url
+                '<img src="{}" style="max-width: calc(min(100%, 450px))">', instance.url
             )
 
         return "-"
 
+    def get_form(self, request, obj=None, **kwargs):
+        if obj is None:
+            return AdminBlobForm
 
-class AttachmentInline(GenericTabularInline):
-    """
-    Inline for Attachment model.
+        return super().get_form(request, obj, **kwargs)
 
-    Add this to the admin.ModelAdmin.inlines attribute of the model you want to attach files to.
-    """
+    def get_readonly_fields(self, request, obj=None):
+        if obj is None:
+            return []
 
-    model = Attachment
-    extra = 0
-    fields = ("blob", "name", "order", "thumbnail")
-    readonly_fields = ("thumbnail",)
-    ordering = ("name", "order")
-    autocomplete_fields = ("blob",)
+        return super().get_readonly_fields(request, obj)
 
-    def thumbnail(self, instance):
-        if instance.blob:
-            return format_html(
-                '<img src="{}" style="max-width: 100%">', instance.blob.file.url
-            )
+    def get_fieldsets(self, request, obj=None):
+        if obj is None:
+            return [
+                (None, {"fields": ("backend", "file", "prefix")}),
+            ]
 
-        return "-"
-
-    thumbnail.short_description = "Thumbnail"
+        return super().get_fieldsets(request, obj)
