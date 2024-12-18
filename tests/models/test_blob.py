@@ -125,7 +125,6 @@ class TestBlobURLs(SimpleTestCase):
     def test_urls_are_generated(self):
         blob = Blob()
         self.assertIsNotNone(blob.url)
-        print(blob.url)
 
     @skipUnless("r2-dev" in settings.STORAGES, "R2 is not configured")
     def test_urls_are_generated_for_r2(self):

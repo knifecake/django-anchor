@@ -24,9 +24,12 @@ class Attachment(BaseModel):
     )
 
     content_type = models.ForeignKey(
-        ContentType, on_delete=models.CASCADE, verbose_name="content type"
+        ContentType,
+        on_delete=models.CASCADE,
+        verbose_name="content type",
+        db_index=False,
     )
-    object_id = models.CharField(db_index=True, max_length=22, verbose_name="object id")
+    object_id = models.CharField(max_length=64, verbose_name="object id")
     content_object = GenericForeignKey("content_type", "object_id")
 
     order = models.IntegerField(default=0, verbose_name="order")
@@ -38,3 +41,7 @@ class Attachment(BaseModel):
     @property
     def url(self):
         return self.blob.url
+
+    @property
+    def signed_id(self):
+        return self.blob.signed_id

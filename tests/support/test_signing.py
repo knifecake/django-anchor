@@ -2,7 +2,7 @@ from django.test import SimpleTestCase
 from django.utils import timezone
 from freezegun import freeze_time
 
-from anchor.models.blob.signing import AnchorSigner, ExpiredSignature, InvalidPurpose
+from anchor.support.signing import AnchorSigner, ExpiredSignature, InvalidPurpose
 
 
 class TestAnchorSigner(SimpleTestCase):

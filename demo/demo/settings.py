@@ -1,5 +1,6 @@
 import os
 import sys
+from datetime import timedelta
 from pathlib import Path
 
 import environ
@@ -132,7 +133,6 @@ if env("R2_ENDPOINT_URL", default=None):
         },
     }
 
-# Anchor
 ANCHOR = {
-    "DEFAULT_STORAGE": "default",
+    "FILE_SYSTEM_BACKEND_EXPIRATION": timedelta(minutes=1),
 }

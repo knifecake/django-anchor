@@ -11,11 +11,10 @@ from django.core.files.storage import Storage, storages
 from django.db import models
 
 from anchor.models.base import BaseModel
-from anchor.models.blob.signing import AnchorSigner
+from anchor.settings import anchor_settings
+from anchor.support.signing import AnchorSigner
 
 logger = logging.getLogger("anchor")
-
-DEFAULT_MIME_TYPE = "application/octet-stream"
 
 
 class BlobQuerySet(models.QuerySet):
@@ -51,7 +50,7 @@ class Blob(BaseModel):
     )
     mime_type = models.CharField(
         max_length=32,
-        default=DEFAULT_MIME_TYPE,
+        default=anchor_settings.DEFAULT_MIME_TYPE,
         verbose_name="MIME type",
         editable=False,
     )
@@ -145,13 +144,13 @@ class Blob(BaseModel):
         If the file name is not available, returns the default MIME type.
         """
         if file.name is None:
-            return DEFAULT_MIME_TYPE
+            return anchor_settings.DEFAULT_MIME_TYPE
 
         mime, _ = mimetypes.guess_type(file.name)
         if mime is not None:
             return mime
 
-        return DEFAULT_MIME_TYPE
+        return anchor_settings.DEFAULT_MIME_TYPE
 
     def calculate_checksum(self, file: DjangoFile) -> str:
         """Computes the MD5 hash of the given file."""

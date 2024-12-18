@@ -94,11 +94,3 @@ class SingleAttachmentField(GenericRelation):
         from django.forms import FileField
 
         return FileField(**kwargs)
-
-
-"""
-from movies.models import Movie
-from django.core.files.base import ContentFile
-movie = Movie.objects.first()
-movie.cover = ContentFile(b'test', name='test.txt')
-"""
