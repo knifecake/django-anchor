@@ -26,6 +26,4 @@ class BaseTransformer:
         raise NotImplementedError()
 
     def _get_temporary_file(self, format: str):
-        return tempfile.NamedTemporaryFile(
-            suffix=f".{format}", mode="w+b", delete_on_close=True, delete=True
-        )
+        return tempfile.NamedTemporaryFile(suffix=f".{format}", mode="w+b", delete=True)
