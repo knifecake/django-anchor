@@ -102,7 +102,7 @@ class Blob(BaseModel):
 
     @property
     def signed_id(self):
-        return type(self)._get_signer().sign(self.key)
+        return self.get_signed_id()
 
     def get_signed_id(self, purpose: str = None):
         return type(self)._get_signer().sign(self.key, purpose)
@@ -145,8 +145,8 @@ class Blob(BaseModel):
                 self.filename = self.service.get_valid_name(os.path.basename(file.name))
             else:
                 self.filename = None
-        except TypeError:
-            pass
+        except TypeError:  # pragma: no cover
+            self.filename = None
         extension = self.extension_with_dot
         if extension and not self.key.endswith(extension):
             self.key = f"{self.key}{extension}"
@@ -216,5 +216,5 @@ class Blob(BaseModel):
     @custom_metadata.setter
     def custom_metadata(self, value):
         if self.metadata is None:
-            self.metadata = {}
+            self.metadata = dict()
         self.metadata["custom"] = value

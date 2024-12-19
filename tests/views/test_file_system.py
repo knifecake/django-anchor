@@ -20,3 +20,11 @@ class TestFileSystemView(TestCase):
         response = self.client.get(self.blob.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.getvalue(), b"test")
+
+    def test_get_with_missing_file(self):
+        deleted_blob = Blob.objects.create(
+            file=ContentFile("deleted", name="deleted.txt")
+        )
+        deleted_blob.purge()
+        response = self.client.get(deleted_blob.url)
+        self.assertEqual(response.status_code, 404)
