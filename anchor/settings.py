@@ -24,6 +24,11 @@ class AnchorSettings:
     How long URLs generated for the file system backend should be valid for.
     """
 
+    IMAGE_PROCESSOR: str = "anchor.services.processors.pillow.PillowProcessor"
+    """
+    The image processor to use for image transformations.
+    """
+
     def __getattribute__(self, name: str) -> Any:
         user_settings = getattr(settings, ANCHOR_SETTINGS_NAME, {})
         return user_settings.get(name, super().__getattribute__(name))

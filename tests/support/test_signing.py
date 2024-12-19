@@ -35,6 +35,8 @@ class TestAnchorSigner(SimpleTestCase):
         )
         self.assertEqual(self.signer.unsign(signed), "a simple string")
 
-        with freeze_time(timezone.now() + timezone.timedelta(days=2)):
-            with self.assertRaises(ExpiredSignature):
-                self.signer.unsign(signed)
+        with (
+            freeze_time(timezone.now() + timezone.timedelta(days=2)),
+            self.assertRaises(ExpiredSignature),
+        ):
+            self.signer.unsign(signed)

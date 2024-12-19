@@ -4,7 +4,7 @@ import logging
 import mimetypes
 import os
 from secrets import token_bytes
-from typing import Optional
+from typing import Any, Optional
 
 from django.core.files import File as DjangoFile
 from django.core.files.storage import Storage, storages
@@ -19,7 +19,7 @@ logger = logging.getLogger("anchor")
 
 class BlobQuerySet(models.QuerySet):
     def get_signed(self, signed_id: str, purpose: str = None):
-        key = type(self.model).unsign_id(signed_id, purpose)
+        key = self.model.unsign_id(signed_id, purpose)
         return self.get(key=key)
 
     def unattached(self):
@@ -133,7 +133,10 @@ class Blob(BaseModel):
         self.unfurl(file)
         self.service.save(self.key, file)
 
-    def unfurl(self, file: DjangoFile):
+    def unfurl(self, file: DjangoFile | Any):
+        if not isinstance(file, DjangoFile):
+            file = DjangoFile(file)
+
         self.mime_type = self.guess_mime_type(file)
         self.byte_size = file.size
         self.checksum = self.calculate_checksum(file)
@@ -205,3 +208,13 @@ class Blob(BaseModel):
 
     def purge(self):
         self.service.delete(self.key)
+
+    @property
+    def custom_metadata(self):
+        return (self.metadata or {}).get("custom", {})
+
+    @custom_metadata.setter
+    def custom_metadata(self, value):
+        if self.metadata is None:
+            self.metadata = {}
+        self.metadata["custom"] = value
