@@ -9,9 +9,6 @@ from django.test.utils import get_runner
 if __name__ == "__main__":
     os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
     django.setup()
-    shutil.rmtree(
-        settings.MEDIA_ROOT,
-    )
     TestRunner = get_runner(settings)
     test_runner = TestRunner()
 
@@ -19,6 +16,9 @@ if __name__ == "__main__":
     failures = test_runner.run_tests(test_labels)
 
     # clear tmp dir
+    shutil.rmtree(
+        settings.MEDIA_ROOT,
+    )
     os.makedirs(settings.MEDIA_ROOT, exist_ok=True)
 
     sys.exit(bool(failures))
