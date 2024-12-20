@@ -15,6 +15,13 @@ class TestVariation(SimpleTestCase):
         v3 = Variation.wrap(Variation.encode({"format": "png"}))
         self.assertIsInstance(v3, Variation)
 
+    def test_default_to(self):
+        v = Variation({"format": "png"})
+        v.default_to({"resize_to_fit": [100, 200], "format": "webp"})
+        self.assertEqual(
+            v.transformations, {"format": "png", "resize_to_fit": [100, 200]}
+        )
+
     def test_encoding(self):
         transformations = {"format": "png"}
         key = Variation.encode(transformations)

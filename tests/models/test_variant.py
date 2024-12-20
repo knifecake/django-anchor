@@ -48,6 +48,7 @@ class TestVariant(TestCase):
 
     def test_processed(self):
         v = Variant(self.blob, {"format": "webp", "resize_to_fit": [10, 20]})
+        v.delete()
         self.assertFalse(v.is_processed)
         self.assertEqual(v.processed, v)
         self.assertTrue(v.is_processed)

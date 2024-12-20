@@ -1,9 +1,11 @@
 import hashlib
 import json
+import mimetypes
 from typing import Any, Self
 
 from anchor.services.transformers.base import BaseTransformer
 from anchor.services.transformers.image import ImageTransformer
+from anchor.settings import anchor_settings
 from anchor.support.base58 import b58encode
 from anchor.support.signing import AnchorSigner
 
@@ -23,6 +25,9 @@ class Variation:
             return cls.decode(value)
         else:
             return cls(value)
+
+    def default_to(self, default_transformations: dict[str, Any]) -> None:
+        self.transformations = {**default_transformations, **self.transformations}
 
     @property
     def key(self) -> str:
@@ -51,9 +56,22 @@ class Variation:
         Applies the transformations to the given file and makes it available as
         a temporary file in a context manager.
         """
-        format = self.transformations.pop("format", "png")
+        format = self.transformations.get("format", "png")
         return self.transformer.transform(file, format=format)
 
     @property
     def transformer(self) -> BaseTransformer:
-        return ImageTransformer(self.transformations)
+        return ImageTransformer(
+            {k: v for (k, v) in self.transformations.items() if k != "format"}
+        )
+
+    @property
+    def mime_type(self) -> str:
+        try:
+            random_filename = f"random.{self.transformations['format']}"
+            return (
+                mimetypes.guess_type(random_filename)[0]
+                or anchor_settings.DEFAULT_MIME_TYPE
+            )
+        except KeyError:
+            return anchor_settings.DEFAULT_MIME_TYPE

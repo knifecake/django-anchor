@@ -21,13 +21,23 @@ urlpatterns = [
         name="blob",
     ),
     path(
+        "representations/<str:signed_blob_id>/<str:variation_key>/",
+        views.representations.RepresentationView.as_view(),
+        name="representation",
+    ),
+    path(
+        "representations/<str:signed_blob_id>/<str:variation_key>/<str:filename>",
+        views.representations.RepresentationView.as_view(),
+        name="representation",
+    ),
+    path(
         "disk/<str:signed_key>/",
-        views.file_system.BlobFileSystemView.as_view(),
+        views.file_system.FileSystemView.as_view(),
         name="disk",
     ),
     path(
         "disk/<str:signed_key>/<str:filename>",
-        views.file_system.BlobFileSystemView.as_view(),
+        views.file_system.FileSystemView.as_view(),
         name="disk",
     ),
 ]

@@ -49,3 +49,6 @@ class Attachment(BaseModel):
     @property
     def filename(self):
         return self.blob.filename
+
+    def representation(self, transformations):
+        return self.blob.representation(transformations)

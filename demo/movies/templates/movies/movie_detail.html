@@ -5,6 +5,11 @@
 <h1>{{ movie.title }}</h1>
 
 
+<div>
+    <img src="{% variant_url movie.cover format='webp' %}" alt="{{ movie.title }}"
+        style="max-width: calc(min(100%, 100px))">
+</div>
+
 <img src="{% blob_url movie.cover %}" alt="{{ movie.title }}" style="max-width: calc(min(100%, 450px))">
 
 <p>

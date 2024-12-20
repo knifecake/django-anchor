@@ -9,10 +9,13 @@ from typing import Any, Optional
 from django.core.files import File as DjangoFile
 from django.core.files.storage import Storage, storages
 from django.db import models
+from django.utils import timezone
 
 from anchor.models.base import BaseModel
 from anchor.settings import anchor_settings
 from anchor.support.signing import AnchorSigner
+
+from .representations import RepresentationsMixin
 
 logger = logging.getLogger("anchor")
 
@@ -40,7 +43,7 @@ class BlobQuerySet(models.QuerySet):
         return blob
 
 
-class Blob(BaseModel):
+class Blob(RepresentationsMixin, BaseModel):
     KEY_LENGTH = 30
 
     class Meta:
@@ -104,8 +107,19 @@ class Blob(BaseModel):
     def signed_id(self):
         return self.get_signed_id()
 
-    def get_signed_id(self, purpose: str = None):
-        return type(self)._get_signer().sign(self.key, purpose)
+    def get_signed_id(
+        self,
+        purpose: str = None,
+        expires_in: timezone.timedelta = None,
+        expires_at: timezone.datetime = None,
+    ):
+        return (
+            type(self)
+            ._get_signer()
+            .sign(
+                self.key, purpose=purpose, expires_in=expires_in, expires_at=expires_at
+            )
+        )
 
     @classmethod
     def unsign_id(cls, signed_id: str, purpose: str = None):
@@ -198,6 +212,23 @@ class Blob(BaseModel):
     @property
     def url(self):
         return self.service.url(self.key)
+
+    def get_url(
+        self,
+        expires_in: timezone.timedelta = None,
+        disposition: str = "inline",
+    ):
+        if hasattr(self.service, "signed_url"):
+            return self.service.signed_url(
+                self.key,
+                expires_in=expires_in,
+                disposition=disposition,
+                mime_type=self.mime_type,
+                backend=self.backend,
+                filename=self.filename,
+            )
+
+        return self.url
 
     def open(self, mode="rb"):
         return self.service.open(self.key, mode)

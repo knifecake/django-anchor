@@ -2,6 +2,8 @@ import hashlib
 from contextlib import contextmanager
 from typing import Any, Self
 
+from django.utils import timezone
+
 from anchor.models import Blob
 from anchor.models.variation import Variation
 from anchor.support.base58 import b58encode
@@ -31,6 +33,25 @@ class Variant:
     @property
     def url(self) -> str:
         return self.service.url(self.key)
+
+    def get_url(
+        self,
+        expires_in: timezone.timedelta = None,
+        disposition: str = "inline",
+    ):
+        if hasattr(self.service, "signed_url"):
+            return self.service.signed_url(
+                self.key,
+                expires_in=expires_in,
+                disposition=disposition,
+                mime_type=self.variation.mime_type,
+                backend=self.blob.backend,
+                filename=self.blob.filename.replace(
+                    self.blob.extension_with_dot,
+                    f".{self.variation.transformations.get('format')}",
+                ),
+            )
+        return self.url
 
     def delete(self) -> None:
         self.service.delete(self.key)
