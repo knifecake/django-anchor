@@ -9,3 +9,5 @@ tmp
 dist/
 *.egg-info
 .venv
+.env
+.DS_Store
