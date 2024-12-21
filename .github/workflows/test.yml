@@ -40,4 +40,4 @@ jobs:
 
       - name: Report coverage
         run: |
-          uv run coverage report -m --skip-covered
+          uv run coverage report --show-missing --skip-covered --include 'anchor/**'
