@@ -29,6 +29,11 @@ class AnchorSettings:
     The image processor to use for image transformations.
     """
 
+    TRACK_VARIANTS: bool = True
+    """
+    Store variant records in the database.
+    """
+
     def __getattribute__(self, name: str) -> Any:
         user_settings = getattr(settings, ANCHOR_SETTINGS_NAME, {})
         return user_settings.get(name, super().__getattribute__(name))

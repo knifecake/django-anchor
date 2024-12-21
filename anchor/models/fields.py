@@ -1,6 +1,5 @@
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
-from django.core.files.base import File
 from django.db import models
 from django.db.models import Model
 
@@ -35,7 +34,7 @@ class ReverseSingleAttachmentDescriptor:
 
         if isinstance(value, Blob):
             blob = value
-        elif isinstance(value, File):
+        elif hasattr(value, "read"):  # quacks like a file?
             blob = Blob.objects.create(
                 file=value, backend=self.backend, prefix=self.prefix
             )

@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.template.defaultfilters import filesizeformat
 from django.utils.html import format_html
 
-from anchor.models import Attachment, Blob
+from anchor.models import Attachment, Blob, VariantRecord
 
 
 class AdminBlobForm(forms.ModelForm):
@@ -87,9 +87,10 @@ class BlobAdmin(admin.ModelAdmin):
         return filesizeformat(instance.byte_size)
 
     def preview(self, instance: Blob):
-        if instance.is_image and instance.url:
+        if instance.is_image:
             return format_html(
-                '<img src="{}" style="max-width: calc(min(100%, 450px))">', instance.url
+                '<img src="{}" style="max-width: calc(min(100%, 450px))">',
+                instance.url(),
             )
 
         return "-"
@@ -113,3 +114,9 @@ class BlobAdmin(admin.ModelAdmin):
             ]
 
         return super().get_fieldsets(request, obj)
+
+
+@admin.register(VariantRecord)
+class VariantRecordAdmin(admin.ModelAdmin):
+    list_display = ("blob", "variation_digest")
+    raw_id_fields = ("blob",)

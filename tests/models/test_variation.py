@@ -29,11 +29,14 @@ class TestVariation(SimpleTestCase):
 
     def test_transformation_order_matters_for_digests(self):
         t1 = {"format": "png", "resize_to_fit": [100, 200]}
-        d1 = Variation(t1).digest()
+        d1 = Variation(t1).digest
 
         t2 = {"resize_to_fit": [100, 200], "format": "png"}
-        d2 = Variation(t2).digest()
+        d2 = Variation(t2).digest
         self.assertNotEqual(d1, d2)
+
+    def test_digest_length(self):
+        self.assertEqual(len(Variation({}).digest), 28)
 
     @override_settings(SECRET_KEY="test")
     def test_keys_are_stable(self):

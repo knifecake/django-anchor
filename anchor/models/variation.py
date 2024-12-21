@@ -33,6 +33,7 @@ class Variation:
     def key(self) -> str:
         return type(self).encode(self.transformations)
 
+    @property
     def digest(self) -> str:
         m = hashlib.sha1()
         m.update(json.dumps(self.transformations).encode("utf-8"))
