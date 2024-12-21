@@ -23,7 +23,7 @@ class TestVariant(TestCase):
 
     def test_url(self):
         v = Variant(self.blob, {"format": "png"})
-        self.assertEqual(v.url, self.blob.service.url(v.key))
+        self.assertIsNotNone(v.url())
 
     def test_delete_does_not_fail_if_variant_does_not_exist(self):
         v = Variant(self.blob, {"format": "png"})

@@ -31,13 +31,13 @@ urlpatterns = [
         name="representation",
     ),
     path(
-        "disk/<str:signed_key>/",
+        "file-system/<str:signed_key>/",
         views.file_system.FileSystemView.as_view(),
-        name="disk",
+        name="file_system",
     ),
     path(
-        "disk/<str:signed_key>/<str:filename>",
+        "file-system/<str:signed_key>/<str:filename>",
         views.file_system.FileSystemView.as_view(),
-        name="disk",
+        name="file_system",
     ),
 ]

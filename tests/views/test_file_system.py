@@ -12,12 +12,12 @@ class TestFileSystemView(TestCase):
 
     def test_invalid_signed_key(self):
         response = self.client.get(
-            reverse("anchor:disk", kwargs={"signed_key": "invalid"})
+            reverse("anchor:file_system", kwargs={"signed_key": "invalid"})
         )
         self.assertEqual(response.status_code, 404)
 
     def test_get(self):
-        response = self.client.get(self.blob.get_url())
+        response = self.client.get(self.blob.url())
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.getvalue(), b"test")
 
@@ -26,5 +26,5 @@ class TestFileSystemView(TestCase):
             file=ContentFile("deleted", name="deleted.txt")
         )
         deleted_blob.purge()
-        response = self.client.get(deleted_blob.get_url())
+        response = self.client.get(deleted_blob.url())
         self.assertEqual(response.status_code, 404)

@@ -9,7 +9,7 @@ from anchor.models import Blob
 class BlobRedirectView(View):
     def get(self, request, signed_id, filename=None):
         blob = self.get_blob(signed_id)
-        return HttpResponseRedirect(blob.get_url())
+        return HttpResponseRedirect(blob.url())
 
     def get_blob(self, signed_id):
         try:

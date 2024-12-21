@@ -177,7 +177,7 @@ class TestBlobURLs(SimpleTestCase):
         with open(GARLIC_PNG, mode="rb") as f:
             blob.upload(File(f, name="image.png"))
 
-        url = blob.url
+        url = blob.url()
         self.assertIsNotNone(url)
         response = requests.get(url)
         self.assertEqual(response.status_code, 200)

@@ -42,7 +42,7 @@ MEDIA_ROOT = os.path.join("tmp")
 STATIC_ROOT = os.path.join("tmp")
 
 STORAGES = {
-    "default": {"BACKEND": "anchor.storage.AnchorFileSystemStorage"},
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
 }
 
 ROOT_URLCONF = "tests.urls"

@@ -8,7 +8,7 @@ from anchor.models import Blob, Variant
 class RepresentationView(View):
     def get(self, request, signed_blob_id, variation_key, filename=None):
         representation: Variant = self.get_representation(signed_blob_id, variation_key)
-        return HttpResponseRedirect(representation.get_url())
+        return HttpResponseRedirect(representation.url())
 
     def get_representation(self, signed_blob_id, variation_key):
         try:

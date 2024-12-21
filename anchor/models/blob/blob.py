@@ -12,6 +12,7 @@ from django.db import models
 from django.utils import timezone
 
 from anchor.models.base import BaseModel
+from anchor.services.urls import get_for_backend
 from anchor.settings import anchor_settings
 from anchor.support.signing import AnchorSigner
 
@@ -209,26 +210,14 @@ class Blob(RepresentationsMixin, BaseModel):
             return ""
         return os.path.splitext(self.filename)[1]
 
+    def url(self, expires_in: timezone.timedelta = None, disposition: str = "inline"):
+        return self.url_service.url(
+            self.key, expires_in=expires_in, disposition=disposition
+        )
+
     @property
-    def url(self):
-        return self.service.url(self.key)
-
-    def get_url(
-        self,
-        expires_in: timezone.timedelta = None,
-        disposition: str = "inline",
-    ):
-        if hasattr(self.service, "signed_url"):
-            return self.service.signed_url(
-                self.key,
-                expires_in=expires_in,
-                disposition=disposition,
-                mime_type=self.mime_type,
-                backend=self.backend,
-                filename=self.filename,
-            )
-
-        return self.url
+    def url_service(self):
+        return get_for_backend(self.backend)
 
     def open(self, mode="rb"):
         return self.service.open(self.key, mode)
