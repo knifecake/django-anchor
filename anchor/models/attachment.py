@@ -7,6 +7,10 @@ from django.db import models
 from anchor.models.base import BaseModel
 
 
+class AttachmentManager(models.Manager):
+    pass
+
+
 class Attachment(BaseModel):
     class Meta:
         constraints = (
@@ -21,6 +25,8 @@ class Attachment(BaseModel):
                 name="ix_anchor_attachment_lookups",
             ),
         )
+
+    objects = AttachmentManager()
 
     blob = models.ForeignKey(
         "anchor.Blob",

@@ -4,7 +4,8 @@ from movies.models import Movie
 
 
 class MovieDetailView(DetailView):
-    model = Movie
+    def get_queryset(self):
+        return Movie.objects.prefetch_related("cover")
 
 
 class MovieUpdateView(UpdateView):
