@@ -60,5 +60,8 @@ dev = [
 [tool.setuptools.packages.find]
 include = ["anchor*"]
 
+[tool.setuptools.package-data]
+anchor = ["templates/anchor/**/*"]
+
 [tool.setuptools.dynamic]
 version = {attr = "anchor.__version__"}
