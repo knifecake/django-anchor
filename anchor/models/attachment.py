@@ -42,6 +42,7 @@ class Attachment(BaseModel):
         on_delete=models.CASCADE,
         verbose_name="content type",
         db_index=False,
+        related_name="+",
     )
     object_id = models.CharField(max_length=64, verbose_name="object id")
     content_object = GenericForeignKey("content_type", "object_id")
