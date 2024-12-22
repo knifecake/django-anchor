@@ -7,7 +7,9 @@ from anchor.models.fields import SingleAttachmentField
 class Movie(models.Model):
     title = models.CharField(max_length=100)
 
-    cover = SingleAttachmentField(upload_to="movie-covers", blank=True)
+    cover = SingleAttachmentField(
+        upload_to="movie-covers", blank=True, help_text="A colorful image of the movie."
+    )
 
     def get_absolute_url(self):
         return reverse("movies:movie_detail", kwargs={"pk": self.pk})

@@ -153,7 +153,12 @@ class SingleAttachmentField(GenericRelation):
     def formfield(self, **kwargs):
         from django.forms import ClearableFileInput, FileField
 
-        defaults = {"required": not self.blank, "widget": ClearableFileInput}
+        defaults = {
+            "required": not self.blank,
+            "widget": ClearableFileInput,
+            "label": self.verbose_name.title() if self.verbose_name else None,
+            "help_text": self.help_text,
+        }
         defaults.update(kwargs)
 
         return FileField(**defaults)
