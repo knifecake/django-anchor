@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Model
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
+from django.utils.text import capfirst
 
 from anchor.models import Attachment, Blob
 
@@ -151,17 +152,17 @@ class SingleAttachmentField(GenericRelation):
         )
 
     def formfield(self, **kwargs):
-        from django.forms import ClearableFileInput, FileField
+        from anchor.forms.fields import BlobField
 
+        super().formfield(**kwargs)
         defaults = {
             "required": not self.blank,
-            "widget": ClearableFileInput,
-            "label": self.verbose_name.title() if self.verbose_name else None,
+            "label": capfirst(self.verbose_name),
             "help_text": self.help_text,
         }
         defaults.update(kwargs)
 
-        return FileField(**defaults)
+        return BlobField(**defaults)
 
     def get_forward_related_filter(self, obj):
         return {
