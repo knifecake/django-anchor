@@ -40,7 +40,9 @@ def variant_url(value: Variant | Blob | Attachment | None, **transformations):
 
 
 def _preprocess_transformations(transformations: dict[str, Any]) -> dict[str, Any]:
-    if "resize_to_fit" in transformations:
+    if "resize_to_fit" in transformations and isinstance(
+        transformations["resize_to_fit"], str
+    ):
         width, height = transformations["resize_to_fit"].split("x")
         transformations["resize_to_fit"] = (int(width), int(height))
 
