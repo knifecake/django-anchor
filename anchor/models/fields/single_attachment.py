@@ -31,11 +31,13 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
 
     def __set__(self, instance, value):
         if isinstance(value, Attachment):
-            value.object_id = instance.id
-            value.content_type = ContentType.objects.get_for_model(instance)
-            value.name = self.name
-            value.order = 0
-            value.save()
+            if value._state.adding:
+                value.object_id = instance.id
+                value.content_type = ContentType.objects.get_for_model(instance)
+                value.name = self.name
+                value.order = 0
+                value.save()
+
             return
 
         if isinstance(value, Blob):
