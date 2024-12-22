@@ -1,3 +1,5 @@
+from typing import Any
+
 from django import template
 from django.urls import reverse
 
@@ -26,7 +28,7 @@ def variant_url(value: Variant | Blob | Attachment | None, **transformations):
     if isinstance(value, Variant):
         variant = value
     else:
-        variant = value.representation(transformations)
+        variant = value.representation(_preprocess_transformations(transformations))
 
     return reverse(
         "anchor:representation",
@@ -35,3 +37,11 @@ def variant_url(value: Variant | Blob | Attachment | None, **transformations):
             "variation_key": variant.variation.key,
         },
     )
+
+
+def _preprocess_transformations(transformations: dict[str, Any]) -> dict[str, Any]:
+    if "resize_to_fit" in transformations:
+        width, height = transformations["resize_to_fit"].split("x")
+        transformations["resize_to_fit"] = (int(width), int(height))
+
+    return transformations
