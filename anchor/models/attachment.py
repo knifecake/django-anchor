@@ -64,5 +64,9 @@ class Attachment(BaseModel):
     def filename(self):
         return self.blob.filename
 
+    @property
+    def is_image(self) -> bool:
+        return self.blob.is_image
+
     def representation(self, transformations: dict[str, Any]):
         return self.blob.representation(transformations)
