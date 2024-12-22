@@ -2,6 +2,7 @@ from contextlib import contextmanager
 
 from django.core.files import File
 
+from anchor.models import Blob
 from anchor.models.variant import Variant
 from anchor.models.variant_record import VariantRecord
 
@@ -30,7 +31,10 @@ class VariantWithRecord(Variant):
         record = VariantRecord.objects.get_or_create(
             blob=self.blob, variation_digest=self.variation.digest
         )[0]
-        record.image = image
+        image_blob = Blob.objects.create(key=self.key)
+        image_blob.unfurl(image)
+        image_blob.save()
+        record.image = image_blob
         return record
 
     @contextmanager

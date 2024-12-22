@@ -30,13 +30,20 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
         self.upload_to = upload_to
         self.backend = backend
 
-    def __get__(self, *args, **kwargs) -> Attachment | None:
+    def __get__(self, instance, cls=None) -> Attachment | None:
         try:
-            return super().__get__(*args, **kwargs)
+            return super().__get__(instance, cls=cls)
         except Attachment.DoesNotExist:
             return None
 
     def __set__(self, instance, value):
+        if value is None:
+            return
+
+        if value is False and self.__get__(instance, cls=Attachment):
+            self.__get__(instance, cls=Attachment).delete()
+            return
+
         if isinstance(value, Attachment):
             if value._state.adding:
                 value.object_id = instance.id
