@@ -56,8 +56,9 @@ dev = [
     "toml>=0.10.2",
 ]
 
-[tool.setuptools]
-packages = ["anchor"]
+
+[tool.setuptools.packages.find]
+include = ["anchor*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "anchor.__version__"}
