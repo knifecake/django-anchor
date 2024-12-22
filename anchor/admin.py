@@ -42,6 +42,8 @@ class AdminBlobForm(forms.ModelForm):
 class AttachmentAdmin(admin.ModelAdmin):
     list_display = ("blob", "name", "order", "content_type", "object_id")
     raw_id_fields = ("blob",)
+    list_filter = ("content_type",)
+    search_fields = ("id", "object_id", "blob__id")
 
     def get_queryset(self, request):
         return (

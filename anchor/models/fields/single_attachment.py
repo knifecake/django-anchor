@@ -5,9 +5,16 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Model
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
+from django.utils.functional import cached_property
 from django.utils.text import capfirst
 
 from anchor.models import Attachment, Blob
+
+
+class SingleAttachmentRel(GenericRel):
+    @cached_property
+    def cache_name(self):
+        return self.field.attname
 
 
 class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
@@ -105,6 +112,8 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
 
 
 class SingleAttachmentField(GenericRelation):
+    rel_class = SingleAttachmentRel
+
     def __init__(
         self,
         upload_to: str | Callable[[Blob], str] = None,

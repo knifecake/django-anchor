@@ -130,6 +130,7 @@ if env("R2_ENDPOINT_URL", default=None):
             "querystring_auth": True,
             "querystring_expire": 600,
             "signature_version": "s3v4",
+            "file_overwrite": False,
         },
     }
 

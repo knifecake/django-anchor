@@ -11,6 +11,12 @@ class Movie(models.Model):
         upload_to="movie-covers", blank=True, help_text="A colorful image of the movie."
     )
 
+    credits = SingleAttachmentField(
+        upload_to="movie-credits",
+        blank=True,
+        help_text="A screenshot of the movie credits screen.",
+    )
+
     def get_absolute_url(self):
         return reverse("movies:movie_detail", kwargs={"pk": self.pk})
 
