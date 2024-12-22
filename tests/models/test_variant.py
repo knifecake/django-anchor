@@ -19,7 +19,7 @@ class TestVariant(TestCase):
 
     def test_service(self):
         v = Variant(self.blob, {"format": "png"})
-        self.assertEqual(type(v.service), type(self.blob.service))
+        self.assertEqual(type(v.storage), type(self.blob.storage))
 
     def test_url(self):
         v = Variant(self.blob, {"format": "png"})

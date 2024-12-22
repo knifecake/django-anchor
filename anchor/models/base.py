@@ -10,7 +10,7 @@ SHORT_UUID_ALPHABET: bytes = base58.BITCOIN_ALPHABET
 SHORT_UUID_LENGTH = 22
 
 
-def _gen_short_uuid():
+def generate_pk():
     return (
         base58.b58encode(uuid.uuid4().bytes, alphabet=SHORT_UUID_ALPHABET)
         .decode("ascii")
@@ -24,12 +24,11 @@ class BaseModel(models.Model):
         max_length=SHORT_UUID_LENGTH,
         verbose_name="ID",
         editable=False,
-        default=_gen_short_uuid,
+        default=generate_pk,
     )
     created_at = models.DateTimeField(
         default=timezone.now, verbose_name=_("created at")
     )
-    updated_at = models.DateTimeField(auto_now=True, verbose_name=_("updated at"))
 
     class Meta:
         abstract = True

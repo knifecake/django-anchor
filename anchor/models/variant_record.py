@@ -23,7 +23,7 @@ class VariantRecord(BaseModel):
         verbose_name="blob",
     )
     variation_digest = models.CharField(max_length=32, verbose_name="variation digest")
-    image = SingleAttachmentField()
+    image = SingleAttachmentField(verbose_name="image")
 
     def delete(self):
         self.image.delete()

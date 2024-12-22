@@ -2,6 +2,7 @@ from django.test import SimpleTestCase, override_settings
 
 from anchor.models.variation import Variation
 from anchor.services.transformers.image import ImageTransformer
+from anchor.settings import anchor_settings
 
 
 class TestVariation(SimpleTestCase):
@@ -67,3 +68,11 @@ class TestVariation(SimpleTestCase):
         ):
             magic_number = transformed.read(4)
             self.assertEqual(magic_number, b"RIFF")
+
+    def test_mime_type(self):
+        v = Variation({"format": "webp"})
+        self.assertEqual(v.mime_type, "image/webp")
+
+    def test_mime_type_with_invalid_format(self):
+        v = Variation({"format": "invalid"})
+        self.assertEqual(v.mime_type, anchor_settings.DEFAULT_MIME_TYPE)

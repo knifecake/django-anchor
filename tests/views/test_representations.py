@@ -27,3 +27,11 @@ class TestRepresentationView(TestCase):
         follow_response = self.client.get(url, follow=True)
         self.assertEqual(follow_response.status_code, 200)
         self.assertEqual(follow_response.get("Content-Type"), "image/webp")
+
+    def test_invalid_key(self):
+        url = reverse(
+            "anchor:representation",
+            kwargs={"signed_blob_id": "invalid", "variation_key": "invalid"},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 404)

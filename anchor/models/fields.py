@@ -1,3 +1,5 @@
+from typing import Callable
+
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -7,9 +9,14 @@ from anchor.models import Attachment, Blob
 
 
 class ReverseSingleAttachmentDescriptor:
-    def __init__(self, name: str, prefix: str = None, backend: str = None):
+    def __init__(
+        self,
+        name: str,
+        upload_to: str | Callable[[Blob], str] = None,
+        backend: str = None,
+    ):
         self.name = name
-        self.prefix = prefix
+        self.upload_to = upload_to
         self.backend = backend
 
     def __get__(self, instance, cls=None):
@@ -36,7 +43,7 @@ class ReverseSingleAttachmentDescriptor:
             blob = value
         elif hasattr(value, "read"):  # quacks like a file?
             blob = Blob.objects.create(
-                file=value, backend=self.backend, prefix=self.prefix
+                file=value, backend=self.backend, upload_to=self.upload_to
             )
         else:
             raise ValueError(
@@ -53,8 +60,13 @@ class ReverseSingleAttachmentDescriptor:
 
 
 class SingleAttachmentField(GenericRelation):
-    def __init__(self, prefix: str = None, backend: str = None, **kwargs):
-        self.prefix = prefix
+    def __init__(
+        self,
+        upload_to: str | Callable[[Blob], str] = None,
+        backend: str = None,
+        **kwargs,
+    ):
+        self.upload_to = upload_to
         self.backend = backend
         self.object_id_field_name = "object_id"
         self.content_type_field_name = "content_type"
@@ -87,7 +99,7 @@ class SingleAttachmentField(GenericRelation):
             cls,
             name,
             ReverseSingleAttachmentDescriptor(
-                name=name, prefix=self.prefix, backend=self.backend
+                name=name, upload_to=self.upload_to, backend=self.backend
             ),
         )
 

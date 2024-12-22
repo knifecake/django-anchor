@@ -26,8 +26,8 @@ class Variant:
         return b58encode(m.digest()).decode("utf-8")
 
     @property
-    def service(self) -> str:
-        return self.blob.service
+    def storage(self) -> str:
+        return self.blob.storage
 
     def url(self) -> str:
         return self.url_service.url(self.key, mime_type=self.variation.mime_type)
@@ -37,7 +37,7 @@ class Variant:
         return get_for_backend(self.blob.backend)
 
     def delete(self) -> None:
-        self.service.delete(self.key)
+        self.storage.delete(self.key)
 
     @contextmanager
     def process(self):
@@ -45,13 +45,13 @@ class Variant:
             self.blob.open() as original,
             self.variation.transform(original) as transformed,
         ):
-            self.service.save(self.key, transformed)
+            self.storage.save(self.key, transformed)
             transformed.seek(0)
             yield transformed
 
     @property
     def is_processed(self) -> bool:
-        return self.service.exists(self.key)
+        return self.storage.exists(self.key)
 
     @property
     def processed(self) -> Self:

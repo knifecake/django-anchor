@@ -89,28 +89,15 @@ class TestBlobUnfurling(SimpleTestCase):
 
 
 class TestBlobKeys(SimpleTestCase):
-    def test_prefix_with_no_prefix(self):
+    def test_upload_to_with_no_upload_to(self):
         blob = Blob()
-        self.assertEqual(blob.prefix, "")
+        self.assertIsNone(blob.upload_to)
 
-    def test_prefix_can_be_set(self):
-        blob = Blob()
-        blob.prefix = "test"
-        self.assertEqual(blob.prefix, "test")
+    def test_upload_to_can_be_set(self):
+        blob = Blob(upload_to="test")
+        self.assertEqual(blob.upload_to, "test")
         self.assertTrue(blob.key.startswith("test/"))
-        self.assertTrue(len(blob.key) > len(blob.prefix))
-
-    def test_prefix_can_be_set_multiple_times(self):
-        blob = Blob()
-        blob.prefix = "test"
-        blob.prefix = "test2"
-        self.assertEqual(blob.prefix, "test2")
-
-    def test_prefix_can_be_set_to_none(self):
-        blob = Blob()
-        blob.prefix = "test"
-        blob.prefix = None
-        self.assertEqual(blob.prefix, "")
+        self.assertTrue(len(blob.key) > len(blob.upload_to))
 
     def test_key_is_generated(self):
         blob = Blob()
@@ -121,8 +108,8 @@ class TestBlobKeys(SimpleTestCase):
         blob = Blob(key="test")
         self.assertEqual(blob.key, "test")
 
-    def test_key_and_prefix_can_be_set(self):
-        blob = Blob(key="test", prefix="test2")
+    def test_key_and_upload_to_can_be_set(self):
+        blob = Blob(key="test", upload_to="test2")
         self.assertEqual(blob.key, "test2/test")
 
     def test_str(self):
@@ -135,8 +122,8 @@ class TestBlobsBehaveLikeFiles(SimpleTestCase):
         blob = Blob()
         blob.upload(File(BytesIO(b"test"), name="text.txt"))
 
-    def test_upload_file_with_prefix(self):
-        blob = Blob(prefix="test")
+    def test_upload_file_with_upload_to(self):
+        blob = Blob(upload_to="test")
         blob.upload(File(BytesIO(b"test"), name="text.txt"))
         self.assertTrue(blob.key.startswith("test/"))
 
@@ -144,14 +131,16 @@ class TestBlobsBehaveLikeFiles(SimpleTestCase):
     def test_upload_file_to_r2(self):
         blob = Blob(backend="r2-dev")
         blob.upload(File(BytesIO(b"test"), name="text.txt"))
-        self.assertTrue(blob.key.endswith(".txt"))
+        self.assertIsNotNone(blob.key)
+        self.assertTrue(blob.storage.exists(blob.key))
 
     @skipUnless("r2-dev" in settings.STORAGES, "R2 is not configured")
     def test_upload_image_to_r2(self):
-        blob = Blob(backend="r2-dev", prefix="test", key="image.png")
+        blob = Blob(backend="r2-dev", upload_to="test", key="image.png")
         with open(GARLIC_PNG, mode="rb") as f:
             blob.upload(File(f, name="image.png"))
         self.assertTrue(blob.key.startswith("test/"))
+        self.assertTrue(blob.storage.exists(blob.key))
 
     def test_open(self):
         blob = Blob()
@@ -163,7 +152,7 @@ class TestBlobsBehaveLikeFiles(SimpleTestCase):
         blob = Blob()
         blob.upload(ContentFile(b"test", name="test.txt"))
         blob.purge()
-        self.assertFalse(blob.service.exists(blob.key))
+        self.assertFalse(blob.storage.exists(blob.key))
 
 
 class TestBlobURLs(SimpleTestCase):
@@ -231,13 +220,11 @@ class TestBlobQuerySet(TestCase):
         blob = Blob.objects.create(filename="test.png")
         self.assertIsNotNone(blob.key)
         self.assertIsNotNone(blob.created_at)
-        self.assertIsNotNone(blob.updated_at)
 
     def test_create_with_file(self):
         blob = Blob.objects.create(filename="test.png", file=ContentFile(b"test"))
         self.assertIsNotNone(blob.key)
         self.assertIsNotNone(blob.created_at)
-        self.assertIsNotNone(blob.updated_at)
 
 
 class TestBlobCustomMetadata(SimpleTestCase):

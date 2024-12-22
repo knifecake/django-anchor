@@ -1,12 +1,11 @@
 from typing import Any
 
+from anchor.models.variation import Variation
 from anchor.settings import anchor_settings
 
 
 class RepresentationsMixin:
     def variant(self, transformations: dict[str, Any]):
-        from anchor.models.variation import Variation
-
         if not self.is_variable:
             raise ValueError("Cannot transform non-variable Blob")
 
@@ -30,7 +29,7 @@ class RepresentationsMixin:
 
     @property
     def default_variant_transformations(self) -> dict[str, Any]:
-        return {"format": "webp"}
+        return {"format": anchor_settings.DEFAULT_VARIANT_FORMAT}
 
     @property
     def variant_class(self):

@@ -68,11 +68,8 @@ class Variation:
 
     @property
     def mime_type(self) -> str:
-        try:
-            random_filename = f"random.{self.transformations['format']}"
-            return (
-                mimetypes.guess_type(random_filename)[0]
-                or anchor_settings.DEFAULT_MIME_TYPE
-            )
-        except KeyError:
-            return anchor_settings.DEFAULT_MIME_TYPE
+        random_filename = f"random.{self.transformations['format']}"
+        return (
+            mimetypes.guess_type(random_filename)[0]
+            or anchor_settings.DEFAULT_MIME_TYPE
+        )

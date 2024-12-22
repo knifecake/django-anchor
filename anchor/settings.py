@@ -34,6 +34,11 @@ class AnchorSettings:
     Store variant records in the database.
     """
 
+    DEFAULT_VARIANT_FORMAT: str = "webp"
+    """
+    The default format to use for variants.
+    """
+
     def __getattribute__(self, name: str) -> Any:
         user_settings = getattr(settings, ANCHOR_SETTINGS_NAME, {})
         return user_settings.get(name, super().__getattribute__(name))

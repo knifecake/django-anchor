@@ -1,3 +1,5 @@
+from typing import Any
+
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
@@ -11,6 +13,12 @@ class Attachment(BaseModel):
             models.constraints.UniqueConstraint(
                 fields=("content_type", "object_id", "name", "order"),
                 name="unique_attachment_per_content_type_and_object_and_name_and_order",
+            ),
+        )
+        indexes = (
+            models.Index(
+                fields=("content_type", "object_id"),
+                name="ix_anchor_attachment_lookups",
             ),
         )
 
@@ -36,11 +44,10 @@ class Attachment(BaseModel):
     name = models.CharField(max_length=256, default="attachments", verbose_name="name")
 
     def __str__(self) -> str:
-        return f"{self.name} {self.order}"
+        return str(self.blob)
 
-    @property
-    def url(self):
-        return self.blob.url
+    def url(self, **kwargs):
+        return self.blob.url(**kwargs)
 
     @property
     def signed_id(self):
@@ -50,5 +57,5 @@ class Attachment(BaseModel):
     def filename(self):
         return self.blob.filename
 
-    def representation(self, transformations):
+    def representation(self, transformations: dict[str, Any]):
         return self.blob.representation(transformations)

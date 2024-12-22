@@ -4,7 +4,7 @@ import logging
 import mimetypes
 import os
 from secrets import token_bytes
-from typing import Any, Optional
+from typing import Any, Callable, Optional, Self
 
 from django.core.files import File as DjangoFile
 from django.core.files.storage import Storage, storages
@@ -43,6 +43,10 @@ class BlobQuerySet(models.QuerySet):
         blob.save()
         return blob
 
+    def from_path(self, path: str, **kwargs):
+        with open(path, "rb") as f:
+            return self.create(file=f, **kwargs)
+
 
 class Blob(RepresentationsMixin, BaseModel):
     KEY_LENGTH = 30
@@ -60,13 +64,13 @@ class Blob(RepresentationsMixin, BaseModel):
         max_length=256, verbose_name="original filename", null=True, default=None
     )
     mime_type = models.CharField(
-        max_length=32,
+        max_length=64,
         default=anchor_settings.DEFAULT_MIME_TYPE,
         verbose_name="MIME type",
         editable=False,
     )
     backend = models.CharField(
-        max_length=32,
+        max_length=64,
         default="default",
         verbose_name="backend",
         editable=False,
@@ -93,16 +97,23 @@ class Blob(RepresentationsMixin, BaseModel):
         verbose_name="metadata",
     )
 
-    def __init__(self, *args, prefix=None, backend=None, **kwargs):
+    upload_to: str | Callable[[Self], str] | None = None
+
+    def __init__(self, *args, upload_to=None, backend=None, **kwargs):
         super().__init__(*args, **kwargs)
         if self.key == "":
             self.key = self.generate_key()
 
-        if prefix is not None:
-            self.prefix = prefix
-
         if backend is not None:
             self.backend = backend
+
+        if upload_to is not None:
+            self.upload_to = upload_to
+
+            if isinstance(upload_to, str):
+                self.prefix = upload_to
+            elif callable(upload_to):
+                self.prefix = upload_to(self)
 
     @property
     def signed_id(self):
@@ -146,7 +157,7 @@ class Blob(RepresentationsMixin, BaseModel):
 
     def upload(self, file: DjangoFile):
         self.unfurl(file)
-        self.service.save(self.key, file)
+        self.storage.save(self.key, file)
 
     def unfurl(self, file: DjangoFile | Any):
         if not isinstance(file, DjangoFile):
@@ -157,14 +168,11 @@ class Blob(RepresentationsMixin, BaseModel):
         self.checksum = self.calculate_checksum(file)
         try:
             if file.name:
-                self.filename = self.service.get_valid_name(os.path.basename(file.name))
+                self.filename = self.storage.get_valid_name(os.path.basename(file.name))
             else:
                 self.filename = None
         except TypeError:  # pragma: no cover
             self.filename = None
-        extension = self.extension_with_dot
-        if extension and not self.key.endswith(extension):
-            self.key = f"{self.key}{extension}"
 
     def guess_mime_type(self, file: DjangoFile):
         """
@@ -193,7 +201,7 @@ class Blob(RepresentationsMixin, BaseModel):
         return base64.urlsafe_b64encode(m.digest()).decode("utf-8")
 
     @property
-    def service(self) -> Storage:
+    def storage(self) -> Storage:
         return storages.create_storage(storages.backends[self.backend])
 
     def generate_key(self):
@@ -203,12 +211,6 @@ class Blob(RepresentationsMixin, BaseModel):
             .replace("=", "")
             .lower()
         )
-
-    @property
-    def extension_with_dot(self):
-        if self.filename is None:
-            return ""
-        return os.path.splitext(self.filename)[1]
 
     def url(self, expires_in: timezone.timedelta = None, disposition: str = "inline"):
         return self.url_service.url(
@@ -220,14 +222,14 @@ class Blob(RepresentationsMixin, BaseModel):
         return get_for_backend(self.backend)
 
     def open(self, mode="rb"):
-        return self.service.open(self.key, mode)
+        return self.storage.open(self.key, mode)
 
     @property
     def is_image(self):
         return self.mime_type.startswith("image/")
 
     def purge(self):
-        self.service.delete(self.key)
+        self.storage.delete(self.key)
 
     @property
     def custom_metadata(self):
