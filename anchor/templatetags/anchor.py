@@ -8,7 +8,10 @@ register = template.Library()
 
 
 @register.simple_tag
-def blob_url(value: Blob | Attachment):
+def blob_url(value: Blob | Attachment | None):
+    if value is None:
+        return ""
+
     return reverse(
         "anchor:blob",
         kwargs={"signed_id": value.signed_id, "filename": value.filename},
@@ -16,7 +19,10 @@ def blob_url(value: Blob | Attachment):
 
 
 @register.simple_tag
-def variant_url(value: Variant | Blob | Attachment, **transformations):
+def variant_url(value: Variant | Blob | Attachment | None, **transformations):
+    if value is None:
+        return ""
+
     if isinstance(value, Variant):
         variant = value
     else:
