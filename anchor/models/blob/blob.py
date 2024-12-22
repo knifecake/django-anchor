@@ -106,6 +106,8 @@ class Blob(RepresentationsMixin, BaseModel):
 
         if backend is not None:
             self.backend = backend
+        else:
+            self.backend = anchor_settings.DEFAULT_STORAGE_BACKEND
 
         if upload_to is not None:
             self.upload_to = upload_to
