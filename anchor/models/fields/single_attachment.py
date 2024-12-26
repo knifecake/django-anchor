@@ -12,8 +12,27 @@ from anchor.models import Attachment, Blob
 
 
 class SingleAttachmentRel(GenericRel):
+    """
+    Holds information about the relation between an Attachment and the Model
+    where the SingleAttachmentField is defined.
+    """
+
+    field: "SingleAttachmentField"
+
+    def __init__(self, field: "SingleAttachmentField"):
+        self.field = field
+        super().__init__(
+            field=field,
+            to="anchor.Attachment",
+            related_name="+",
+            related_query_name="+",
+        )
+
     @cached_property
     def cache_name(self):
+        # Use the name given to the field in the model instance to avoid
+        # collisions when there are multiple SingleAttachmentFields defined on
+        # the same instance
         return self.field.attname
 
 
@@ -37,6 +56,9 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             return None
 
     def __set__(self, instance, value):
+        # Be compatible with how Django handles files in the forms API. A
+        # None value signifies that the file was not updated, while a False
+        # value signifies that the file should be deleted.
         if value is None:
             return
 
@@ -66,10 +88,11 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             )
 
         Attachment.objects.update_or_create(
-            object_id=instance.id,
-            content_type=ContentType.objects.get_for_model(instance),
-            name=self.name,
-            order=0,
+            # object_id=instance.id,
+            # content_type=ContentType.objects.get_for_model(instance),
+            # name=self.name,
+            # order=0,
+            **self.related.field.get_forward_related_filter(instance),
             defaults={"blob": blob},
         )
 
@@ -119,6 +142,35 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
 
 
 class SingleAttachmentField(GenericRelation):
+    """
+    Enables a model to hold a single attachment.
+
+    When accessing this field, you'll get an :py:class:`Attachment
+    <anchor.models.attachment.Attachment>` instance. To set the file attachment,
+    you can assign a plain file-like object, a :py:class:`Blob
+    <anchor.models.blob.blob.Blob>` instance or an :py:class:`Attachment
+    <anchor.models.attachment.Attachment>` instance.
+
+    Example:
+        A SingleAttachmentField allows attaching a single file to a model
+        instance:
+
+        >>> from django.db import models
+        >>> from anchor.models.fields import SingleAttachmentField
+        >>>
+        >>> class Movie(models.Model):
+        ...     title = models.CharField(max_length=100)
+        ...     cover = SingleAttachmentField(
+        ...         upload_to="movie-covers",
+        ...         help_text="A colorful image of the movie."
+        ...     )
+        ...
+        >>> movie = Movie.objects.create(title="The Matrix")
+        >>> movie.cover = uploaded_file  # Attach a file
+        >>> movie.cover.url()  # Get URL to original file
+        '/media/movie-covers/matrix-cover.jpg'
+    """
+
     rel_class = SingleAttachmentRel
 
     def __init__(
@@ -141,13 +193,7 @@ class SingleAttachmentField(GenericRelation):
         kwargs["from_fields"] = []
         kwargs["serialize"] = False
 
-        self.rel = self.rel_class(
-            self,
-            to="anchor.Attachment",
-            related_name="+",
-            related_query_name="+",
-            limit_choices_to=None,
-        )
+        self.rel = self.rel_class(field=self)
 
         # Bypass the GenericRelation constructor to be able to set editable=True
         super(GenericRelation, self).__init__(
@@ -170,7 +216,7 @@ class SingleAttachmentField(GenericRelation):
         )
 
     def formfield(self, **kwargs):
-        from anchor.forms.fields import BlobField
+        from anchor.forms.fields import SingleAttachmentField
 
         super().formfield(**kwargs)
         defaults = {
@@ -180,7 +226,7 @@ class SingleAttachmentField(GenericRelation):
         }
         defaults.update(kwargs)
 
-        return BlobField(**defaults)
+        return SingleAttachmentField(**defaults)
 
     def get_forward_related_filter(self, obj):
         return {

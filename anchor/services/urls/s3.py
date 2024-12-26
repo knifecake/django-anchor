@@ -4,6 +4,11 @@ from anchor.services.urls.base import BaseURLGenerator
 
 
 class S3URLGenerator(BaseURLGenerator):
+    """
+    URL Generator for use with the S3Backend from the ``django-storages``
+    package.
+    """
+
     def url(
         self,
         key: str,

@@ -1,7 +1,7 @@
 from django import forms
 
-from .widgets import ClearableBlobInput
+from .widgets import SingleAttachmentInput
 
 
-class BlobField(forms.FileField):
-    widget = ClearableBlobInput
+class SingleAttachmentField(forms.FileField):
+    widget = SingleAttachmentInput

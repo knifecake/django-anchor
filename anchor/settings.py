@@ -16,7 +16,8 @@ class AnchorSettings:
 
     DEFAULT_MIME_TYPE: str = "application/octet-stream"
     """
-    The default MIME type to use for Blobs when it cannot be guessed from the file extension.
+    The default MIME type to use for files when it cannot be guessed from the
+    file extension.
     """
 
     FILE_SYSTEM_BACKEND_EXPIRATION: timedelta = timedelta(hours=1)
@@ -38,6 +39,10 @@ class AnchorSettings:
     """
     The default format to use for variants.
     """
+
+    def __init__(self, *args, **kwargs):
+        # Hide constructor signature from the docs
+        super().__init__(*args, **kwargs)
 
     def __getattribute__(self, name: str) -> Any:
         user_settings = getattr(settings, ANCHOR_SETTINGS_NAME, {})

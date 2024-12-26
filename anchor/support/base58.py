@@ -1,5 +1,6 @@
 """
-Base58 encoding adapted from the base58 package by David Keijser released under the MIT license.
+Base58 encoding adapted from the base58 package by David Keijser released under
+the MIT license.
 
 See https://github.com/keis/base58 for full credits.
 """

@@ -1,3 +1,8 @@
+"""
+Blob URLs should not be exposed directly to users. Instead, use signed,
+short-lived URLs generated with these functions.
+"""
+
 from typing import Any
 
 from django import template
@@ -11,6 +16,9 @@ register = template.Library()
 
 @register.simple_tag
 def blob_url(value: Blob | Attachment | None):
+    """
+    Return a signed URL for the given Attachment or Blob.
+    """
     if value is None:
         return ""
 
@@ -21,7 +29,10 @@ def blob_url(value: Blob | Attachment | None):
 
 
 @register.simple_tag
-def variant_url(value: Variant | Blob | Attachment | None, **transformations):
+def representation_url(value: Variant | Blob | Attachment | None, **transformations):
+    """
+    Return a signed URL for a transformation of the given Attachment or Blob.
+    """
     if value is None:
         return ""
 

@@ -1,3 +1,8 @@
+"""
+Extends Django's signing module to make it easier to work with object keys and
+key expirations.
+"""
+
 import base64
 from typing import Any, Type
 

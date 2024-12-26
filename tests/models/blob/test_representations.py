@@ -1,6 +1,7 @@
 from django.test import SimpleTestCase
 
 from anchor.models import Blob
+from anchor.models.blob.representations import NotRepresentableError
 
 
 class TestRepresentations(SimpleTestCase):
@@ -44,5 +45,5 @@ class TestRepresentations(SimpleTestCase):
 
     def test_cannot_represent_non_variable_blob(self):
         text = Blob(mime_type="text/plain")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(NotRepresentableError):
             text.representation({"format": "png"})

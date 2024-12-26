@@ -5,6 +5,8 @@ from anchor.models import Blob
 
 
 class Command(BaseCommand):
+    help = "Purge and delete blobs not used by any attachment"
+
     def add_arguments(self, parser):
         parser.add_argument(
             "--dry-run", action="store_true", help="Dry run the command"

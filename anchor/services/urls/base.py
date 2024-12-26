@@ -3,6 +3,16 @@ from django.utils import timezone
 
 
 class BaseURLGenerator:
+    """
+    Generates (signed) URLs for blobs.
+
+    URLGenerators are a workaround against the limitations of Django's Storage
+    interface, which doesn't support passing parameters for URL generation.
+    These allow us to set parameters on URLs such as the content disposition
+    which are necessary to ensure external backends like S3 can serve blobs
+    securely.
+    """
+
     backend: str
     storage: Storage
 
@@ -18,4 +28,7 @@ class BaseURLGenerator:
         disposition: str = "inline",
         filename: str = None,
     ):
+        """
+        Generate a signed URL for the given storage key.
+        """
         return self.storage.url(key)

@@ -1,10 +1,10 @@
 from django.forms.widgets import ClearableFileInput
 
 
-class ClearableBlobInput(ClearableFileInput):
+class SingleAttachmentInput(ClearableFileInput):
     # make this widget work with the Django admin
     choices = []
 
 
-class AdminBlobInput(ClearableBlobInput):
+class AdminSingleAttachmentInput(SingleAttachmentInput):
     template_name = "anchor/widgets/admin_blob_input.html"
