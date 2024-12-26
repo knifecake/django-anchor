@@ -1,10 +1,12 @@
-from typing import Callable
+import os
+from typing import Any, Callable
 
 from django.contrib.contenttypes.fields import GenericRel, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Model
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
+from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import capfirst
 
@@ -41,7 +43,7 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
         self,
         related: GenericRel,
         name: str,
-        upload_to: str | Callable[[Blob], str] = None,
+        upload_to: str | Callable[[models.Model, Any], str] = None,
         backend: str = None,
     ):
         self.related = related
@@ -80,7 +82,7 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             blob = value
         elif hasattr(value, "read"):  # quacks like a file?
             blob = Blob.objects.create(
-                file=value, backend=self.backend, upload_to=self.upload_to
+                file=value, backend=self.backend, key=self.get_key(value)
             )
         else:
             raise ValueError(
@@ -88,10 +90,6 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             )
 
         Attachment.objects.update_or_create(
-            # object_id=instance.id,
-            # content_type=ContentType.objects.get_for_model(instance),
-            # name=self.name,
-            # order=0,
             **self.related.field.get_forward_related_filter(instance),
             defaults={"blob": blob},
         )
@@ -140,6 +138,17 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             False,
         )
 
+    def get_key(self, value: Any):
+        if self.upload_to is None:
+            return Blob.generate_key()
+        elif isinstance(self.upload_to, str):
+            dir = timezone.now().strftime(str(self.upload_to))
+            return os.path.join(dir, Blob.generate_key())
+        elif callable(self.upload_to):
+            return self.upload_to(self.model, value)
+        else:
+            raise ValueError("upload_to must be a string or a callable")
+
 
 class SingleAttachmentField(GenericRelation):
     """
@@ -175,7 +184,7 @@ class SingleAttachmentField(GenericRelation):
 
     def __init__(
         self,
-        upload_to: str | Callable[[Blob], str] = None,
+        upload_to: str | Callable[[models.Model, Blob], str] = None,
         backend: str = None,
         **kwargs,
     ):

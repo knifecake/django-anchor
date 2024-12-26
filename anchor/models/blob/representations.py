@@ -42,8 +42,10 @@ class RepresentationsMixin:
         """
         if self.is_variable:
             return self.variant(transformations)
-        else:
+        elif self.is_previewable:
             return self.preview()
+        else:
+            raise NotRepresentableError()
 
     @property
     def is_representable(self) -> bool:

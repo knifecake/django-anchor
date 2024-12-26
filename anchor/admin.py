@@ -21,18 +21,11 @@ class AdminBlobForm(forms.ModelForm):
         initial="default",
     )
     file = forms.FileField()
-    prefix = forms.CharField(
-        required=False, help_text="The folder where to store the blob into"
-    )
 
     def save(self, commit=True):
-        blob = Blob(
-            prefix=self.cleaned_data["prefix"], backend=self.cleaned_data["backend"]
+        return Blob.objects.create(
+            file=self.cleaned_data["file"], backend=self.cleaned_data["backend"]
         )
-
-        blob.upload(self.cleaned_data["file"])
-        blob.save()
-        return blob
 
     def save_m2m(self):
         pass
@@ -112,7 +105,7 @@ class BlobAdmin(admin.ModelAdmin):
     def get_fieldsets(self, request, obj=None):
         if obj is None:
             return [
-                (None, {"fields": ("backend", "file", "prefix")}),
+                (None, {"fields": ("backend", "file")}),
             ]
 
         return super().get_fieldsets(request, obj)

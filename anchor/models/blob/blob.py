@@ -4,7 +4,7 @@ import logging
 import mimetypes
 import os
 from secrets import token_bytes
-from typing import Any, Callable, Optional, Self
+from typing import Any, Optional
 
 from django.core.files import File as DjangoFile
 from django.core.files.storage import Storage, storages
@@ -140,25 +140,15 @@ class Blob(RepresentationsMixin, BaseModel):
     If you need to store custom metadata, refer to the :py:attr:`custom_metadata` property.
     """
 
-    upload_to: str | Callable[[Self], str] | None = None
-
-    def __init__(self, *args, upload_to=None, backend=None, **kwargs):
+    def __init__(self, *args, backend=None, **kwargs):
         super().__init__(*args, **kwargs)
         if self.key == "":
-            self.key = self.generate_key()
+            self.key = type(self).generate_key()
 
         if backend is not None:
             self.backend = backend
         else:
             self.backend = anchor_settings.DEFAULT_STORAGE_BACKEND
-
-        if upload_to is not None:
-            self.upload_to = upload_to
-
-            if isinstance(upload_to, str):
-                self.prefix = upload_to
-            elif callable(upload_to):
-                self.prefix = upload_to(self)
 
     @property
     def signed_id(self):
@@ -219,17 +209,6 @@ class Blob(RepresentationsMixin, BaseModel):
     @classmethod
     def _get_signer(cls):
         return AnchorSigner()
-
-    @property
-    def prefix(self):
-        return os.path.dirname(self.key)
-
-    @prefix.setter
-    def prefix(self, value):
-        if value is None:
-            self.key = os.path.basename(self.key)
-        else:
-            self.key = os.path.join(value, os.path.basename(self.key))
 
     def __str__(self):
         return self.filename or self.id
@@ -292,7 +271,8 @@ class Blob(RepresentationsMixin, BaseModel):
         """
         return storages.create_storage(storages.backends[self.backend])
 
-    def generate_key(self):
+    @classmethod
+    def generate_key(cls):
         """
         Generates a random key to store this blob in the storage backend.
 
@@ -303,7 +283,7 @@ class Blob(RepresentationsMixin, BaseModel):
         case insensitive file systems.
         """
         return (
-            base64.b32encode(token_bytes(self.KEY_LENGTH))
+            base64.b32encode(token_bytes(cls.KEY_LENGTH))
             .decode("utf-8")
             .replace("=", "")
             .lower()

@@ -89,16 +89,6 @@ class TestBlobUnfurling(SimpleTestCase):
 
 
 class TestBlobKeys(SimpleTestCase):
-    def test_upload_to_with_no_upload_to(self):
-        blob = Blob()
-        self.assertIsNone(blob.upload_to)
-
-    def test_upload_to_can_be_set(self):
-        blob = Blob(upload_to="test")
-        self.assertEqual(blob.upload_to, "test")
-        self.assertTrue(blob.key.startswith("test/"))
-        self.assertTrue(len(blob.key) > len(blob.upload_to))
-
     def test_key_is_generated(self):
         blob = Blob()
         self.assertIsNotNone(blob.key)
@@ -107,10 +97,6 @@ class TestBlobKeys(SimpleTestCase):
     def test_key_can_be_set(self):
         blob = Blob(key="test")
         self.assertEqual(blob.key, "test")
-
-    def test_key_and_upload_to_can_be_set(self):
-        blob = Blob(key="test", upload_to="test2")
-        self.assertEqual(blob.key, "test2/test")
 
     def test_str(self):
         blob = Blob(key="test")
@@ -122,24 +108,11 @@ class TestBlobsBehaveLikeFiles(SimpleTestCase):
         blob = Blob()
         blob.upload(File(BytesIO(b"test"), name="text.txt"))
 
-    def test_upload_file_with_upload_to(self):
-        blob = Blob(upload_to="test")
-        blob.upload(File(BytesIO(b"test"), name="text.txt"))
-        self.assertTrue(blob.key.startswith("test/"))
-
     @skipUnless("r2-dev" in settings.STORAGES, "R2 is not configured")
     def test_upload_file_to_r2(self):
         blob = Blob(backend="r2-dev")
         blob.upload(File(BytesIO(b"test"), name="text.txt"))
         self.assertIsNotNone(blob.key)
-        self.assertTrue(blob.storage.exists(blob.key))
-
-    @skipUnless("r2-dev" in settings.STORAGES, "R2 is not configured")
-    def test_upload_image_to_r2(self):
-        blob = Blob(backend="r2-dev", upload_to="test", key="image.png")
-        with open(GARLIC_PNG, mode="rb") as f:
-            blob.upload(File(f, name="image.png"))
-        self.assertTrue(blob.key.startswith("test/"))
         self.assertTrue(blob.storage.exists(blob.key))
 
     def test_open(self):
