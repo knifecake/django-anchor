@@ -5,6 +5,7 @@ from django.template.defaultfilters import filesizeformat
 from django.utils.html import format_html
 
 from anchor.models import Attachment, Blob, VariantRecord
+from anchor.settings import anchor_settings
 
 
 class AdminBlobForm(forms.ModelForm):
@@ -18,7 +19,7 @@ class AdminBlobForm(forms.ModelForm):
             for k, v in settings.STORAGES.items()
             if v["BACKEND"] != "django.contrib.staticfiles.storage.StaticFilesStorage"
         ],
-        initial="default",
+        initial=anchor_settings.DEFAULT_STORAGE_BACKEND,
     )
     file = forms.FileField()
 
