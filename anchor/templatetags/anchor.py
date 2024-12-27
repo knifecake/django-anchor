@@ -19,7 +19,7 @@ def blob_url(value: Blob | Attachment | None):
     """
     Return a signed URL for the given Attachment or Blob.
     """
-    if value is None:
+    if value is None or value == "":
         return ""
 
     return reverse(
@@ -33,7 +33,7 @@ def representation_url(value: Variant | Blob | Attachment | None, **transformati
     """
     Return a signed URL for a transformation of the given Attachment or Blob.
     """
-    if value is None:
+    if value is None or value == "":
         return ""
 
     if isinstance(value, Variant):
