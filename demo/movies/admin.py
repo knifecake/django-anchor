@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from anchor.forms.widgets import AdminBlobInput
+from anchor.forms.widgets import SingleAttachmentInput
 from anchor.models.fields import SingleAttachmentField
 
 from .models import Movie
@@ -13,6 +13,6 @@ class MovieAdmin(admin.ModelAdmin):
 
     formfield_overrides = {
         SingleAttachmentField: {
-            "widget": AdminBlobInput,
+            "widget": SingleAttachmentInput,
         },
     }

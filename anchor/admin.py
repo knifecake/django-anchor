@@ -63,6 +63,8 @@ class BlobAdmin(admin.ModelAdmin):
         "checksum",
         "preview",
         "key",
+        "id",
+        "created_at",
     )
     fieldsets = (
         (
@@ -73,6 +75,7 @@ class BlobAdmin(admin.ModelAdmin):
                     ("filename",),
                     ("mime_type", "human_size", "checksum"),
                     ("preview",),
+                    ("id", "created_at"),
                 )
             },
         ),
