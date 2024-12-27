@@ -1,4 +1,3 @@
-import os
 from typing import Any, Callable
 
 from django.contrib.contenttypes.fields import GenericRel, GenericRelation
@@ -6,7 +5,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.db import models
 from django.db.models import Model
 from django.db.models.fields.related_descriptors import ReverseOneToOneDescriptor
-from django.utils import timezone
 from django.utils.functional import cached_property
 from django.utils.text import capfirst
 
@@ -82,7 +80,9 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             blob = value
         elif hasattr(value, "read"):  # quacks like a file?
             blob = Blob.objects.create(
-                file=value, backend=self.backend, key=self.get_key(value)
+                file=value,
+                backend=self.backend,
+                key=Blob.key_with_upload_to(self.upload_to, value),
             )
         else:
             raise ValueError(
@@ -137,17 +137,6 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             self.related.cache_name,
             False,
         )
-
-    def get_key(self, value: Any):
-        if self.upload_to is None:
-            return Blob.generate_key()
-        elif isinstance(self.upload_to, str):
-            dir = timezone.now().strftime(str(self.upload_to))
-            return os.path.join(dir, Blob.generate_key())
-        elif callable(self.upload_to):
-            return self.upload_to(self.model, value)
-        else:
-            raise ValueError("upload_to must be a string or a callable")
 
 
 class SingleAttachmentField(GenericRelation):

@@ -3,7 +3,6 @@ import hashlib
 import logging
 import mimetypes
 import os
-from secrets import token_bytes
 from typing import Any, Optional
 
 from django.core.files import File as DjangoFile
@@ -16,6 +15,7 @@ from anchor.services.urls import get_for_backend
 from anchor.settings import anchor_settings
 from anchor.support.signing import AnchorSigner
 
+from .keys import KeysMixin
 from .representations import RepresentationsMixin
 
 logger = logging.getLogger("anchor")
@@ -48,7 +48,7 @@ class BlobQuerySet(models.QuerySet):
             return self.create(file=f, **kwargs)
 
 
-class Blob(RepresentationsMixin, BaseModel):
+class Blob(KeysMixin, RepresentationsMixin, BaseModel):
     """
     Stores metadata for files stored by Django Anchor.
     """
@@ -270,24 +270,6 @@ class Blob(RepresentationsMixin, BaseModel):
         object's :py:attr:`backend`.
         """
         return storages.create_storage(storages.backends[self.backend])
-
-    @classmethod
-    def generate_key(cls):
-        """
-        Generates a random key to store this blob in the storage backend.
-
-        Keys are hard to guess, but shouldn't be shared directly with users,
-        preferring to use :py:attr:`signed_id` instead, which can be expired.
-
-        They use the base32 encoding to ensure no compatibility issues arise in
-        case insensitive file systems.
-        """
-        return (
-            base64.b32encode(token_bytes(cls.KEY_LENGTH))
-            .decode("utf-8")
-            .replace("=", "")
-            .lower()
-        )
 
     def url(self, expires_in: timezone.timedelta = None, disposition: str = "inline"):
         """

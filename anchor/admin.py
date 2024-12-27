@@ -1,11 +1,7 @@
-import os
-from typing import Any
-
 from django import forms
 from django.conf import settings
 from django.contrib import admin
 from django.template.defaultfilters import filesizeformat
-from django.utils import timezone
 from django.utils.html import format_html
 
 from anchor.models import Attachment, Blob, VariantRecord
@@ -31,18 +27,15 @@ class AdminBlobForm(forms.ModelForm):
         return Blob.objects.create(
             file=self.cleaned_data["file"],
             backend=self.cleaned_data["backend"],
-            key=self.get_key(self.cleaned_data["file"]),
+            key=Blob.key_with_upload_to(
+                upload_to=anchor_settings.ADMIN_UPLOAD_TO,
+                instance=None,
+                file=self.cleaned_data["file"],
+            ),
         )
 
     def save_m2m(self):
         pass
-
-    def get_key(self, file: Any) -> str:
-        if anchor_settings.ADMIN_UPLOAD_TO:
-            dirname = timezone.now().strftime(anchor_settings.ADMIN_UPLOAD_TO)
-            return os.path.join(dirname, Blob.generate_key())
-
-        return Blob.generate_key()
 
 
 @admin.register(Attachment)
