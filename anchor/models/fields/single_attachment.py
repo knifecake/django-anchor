@@ -82,7 +82,9 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             blob = Blob.objects.create(
                 file=value,
                 backend=self.backend,
-                key=Blob.key_with_upload_to(self.upload_to, value),
+                key=Blob.key_with_upload_to(
+                    upload_to=self.upload_to, file=value, instance=instance
+                ),
             )
         else:
             raise ValueError(
