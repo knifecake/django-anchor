@@ -40,6 +40,11 @@ class AnchorSettings:
     The default format to use for variants.
     """
 
+    ADMIN_UPLOAD_TO: str = "admin-uploads/%Y/%m/%d/"
+    """
+    The prefix to use for files uploaded via the Django admin interface.
+    """
+
     def __init__(self, *args, **kwargs):
         # Hide constructor signature from the docs
         super().__init__(*args, **kwargs)
