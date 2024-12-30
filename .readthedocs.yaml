@@ -5,11 +5,8 @@ build:
   tools:
     python: "3.13"
   jobs:
-    post_create_environment:
+    pre_install:
       - pip install uv
-    post_install:
-      - uv export requirements-txt > requirements.txt
-      - pip install -r requirements.txt
-
+      - uv export --format requirements-txt > requirements.txt
 sphinx:
   configuration: docs/conf.py
