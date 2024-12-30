@@ -12,15 +12,17 @@ fields, but adds a few extra features:
 - Files are served through signed URLs that can expire after a configurable
   amount of time, even when using the default file-system storage backend.
 
-Django Anchor is essentially a port of the excellent `Active Storage
-<https://edgeguides.rubyonrails.org/active_storage_overview.html>`_ Ruby on
-Rails feature, but leveraging existing Django abstractions and packages of the
-Python ecosystem. Some features are not yet implemented, but the core concepts
-are there two eventually be able to support them.
+Django Anchor is essentially a port of the excellent [Active
+Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html) Ruby
+on Rails feature, but leveraging existing Django abstractions and packages of
+the Python ecosystem. Some features are not yet implemented, but the core
+concepts are there two eventually be able to support them.
 
 ## Installation
 
-Check out the [installation guide](https://django-anchor.readthedocs.io/en/latest/installation.html) in the documentation for more details.
+Check out the [installation
+guide](https://django-anchor.readthedocs.io/en/latest/installation.html) in the
+documentation for more details.
 
 Django-anchor is compatible with Django >= 4.2 and Python >= 3.11.
 
@@ -48,12 +50,15 @@ Django-anchor is compatible with Django >= 4.2 and Python >= 3.11.
    python manage.py migrate
    ```
 
-In addition, if you wish to create image variants, a Pillow >= 8.4 should be
+In addition, if you wish to create image variants, a Pillow >= 9.5 should be
 available in your system.
 
 ## Usage
 
-💡 Check out the [demo](./demo/) Django project for inspiration and the [Getting Started guide](https://django-anchor.readthedocs.io/en/latest/getting_started.html) in the documentation.
+💡 Check out the [demo](./demo/) Django project for inspiration and the [Getting
+Started
+guide](https://django-anchor.readthedocs.io/en/latest/getting_started.html) in
+the documentation.
 
 ### Adding files to models
 
