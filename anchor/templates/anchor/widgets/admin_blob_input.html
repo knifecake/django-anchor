@@ -3,7 +3,8 @@
     <div>
         {% if widget.is_initial %}
         {% if widget.value.is_image %}
-        <img style="max-width: 200px; max-height: 200px; object-fit: contain;" src="{% blob_thumbnail widget.value %}">
+        <img style="max-width: 200px; max-height: 200px; object-fit: contain;"
+            src="{% variant_url widget.value resize_to_fit='200x200' %}">
         {% else %}
         {{ widget.initial_text }}: <a href="{{ widget.value.url }}">{{ widget.value }}</a>
         {% endif %}

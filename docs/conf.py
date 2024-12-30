@@ -1,21 +1,21 @@
 import os
 import sys
-import toml
+
 import django
 
 project = "Django Anchor"
 copyright = "2024, Elias Hernandis"
 author = "Elias Hernandis"
 
-# Read version from pyproject.toml
-with open("../pyproject.toml", "r") as f:
-    pyproject = toml.load(f)
-    release = pyproject["tool"]["poetry"]["version"]
 
 # Make source available for autodoc
-os.environ["DJANGO_SETTINGS_MODULE"] = "tests.test_settings"
+os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
 sys.path.insert(0, os.path.abspath(".."))
 django.setup()
+
+import anchor  # noqa: E402
+
+release = anchor.__version__
 
 
 # -- General configuration ---------------------------------------------------

@@ -1,24 +1,24 @@
 from django.db import models
-from anchor.models.attachment import Attachment
-from anchor.models.fields import BlobField
+from django.urls import reverse
+
+from anchor.models.fields import SingleAttachmentField
 
 
 class Movie(models.Model):
     title = models.CharField(max_length=100)
-    # A compulsory field that must be set on every instance
-    cover = BlobField()
 
-    # An optional file that can be left blank
-    poster = BlobField(blank=True, null=True)
+    cover = SingleAttachmentField(
+        upload_to="movie-covers", blank=True, help_text="A colorful image of the movie."
+    )
 
-    @property
-    def scenes(self):
-        return (
-            Attachment.objects.select_related("blob")
-            .filter_by_object(self, name="scenes")
-            .order_by("order")
-            .all()
-        )
+    credits = SingleAttachmentField(
+        upload_to="movie-credits",
+        blank=True,
+        help_text="A screenshot of the movie credits screen.",
+    )
+
+    def get_absolute_url(self):
+        return reverse("movies:movie_detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.title

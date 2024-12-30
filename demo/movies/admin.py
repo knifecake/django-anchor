@@ -1,12 +1,18 @@
 from django.contrib import admin
 
+from anchor.forms.widgets import SingleAttachmentInput
+from anchor.models.fields import SingleAttachmentField
 
 from .models import Movie
-from anchor.admin import AttachmentInline, BlobFieldMixin
 
 
 @admin.register(Movie)
-class MovieAdmin(BlobFieldMixin, admin.ModelAdmin):
-    inlines = [AttachmentInline]
+class MovieAdmin(admin.ModelAdmin):
     list_display = ["title"]
     search_fields = ["title"]
+
+    formfield_overrides = {
+        SingleAttachmentField: {
+            "widget": SingleAttachmentInput,
+        },
+    }

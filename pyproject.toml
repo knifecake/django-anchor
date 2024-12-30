@@ -14,7 +14,6 @@ classifiers = [
     "Framework :: Django :: 4.2",
     "Framework :: Django :: 5.0",
     "Framework :: Django :: 5.1",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -48,13 +47,21 @@ build-backend = "setuptools.build_meta"
 [dependency-groups]
 dev = [
     "coverage>=7.6.9",
+    "django-environ>=0.11.2",
+    "django-storages[s3]>=1.14.4",
+    "freezegun>=1.5.1",
     "pre-commit>=4.0.1",
+    "requests>=2.32.3",
     "sphinx>=8.1.3",
     "toml>=0.10.2",
 ]
 
-[tool.setuptools]
-packages = ["anchor"]
+
+[tool.setuptools.packages.find]
+include = ["anchor*"]
+
+[tool.setuptools.package-data]
+anchor = ["templates/anchor/**/*"]
 
 [tool.setuptools.dynamic]
 version = {attr = "anchor.__version__"}

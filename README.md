@@ -3,43 +3,26 @@
 [![Test](https://github.com/knifecake/django-anchor/actions/workflows/test.yml/badge.svg)](https://github.com/knifecake/django-anchor/actions/workflows/test.yml)
 [![Documentation Status](https://readthedocs.org/projects/django-anchor/badge/?version=latest)](https://django-anchor.readthedocs.io/en/latest/?badge=latest)
 
+Django Anchor is a reusable Django app that allows you to attach files to models.
 
-A reusable Django app to handle files attached to models, inspired by Ruby on
-Rails' excellent [Active
-Storage](https://edgeguides.rubyonrails.org/active_storage_overview.html).
+Anchor works very similarly to Django's ``FileField`` and ``ImageField`` model
+fields, but adds a few extra features:
 
-## Features
+- Images can be resized, converted to another format and otherwise transformed.
+- Files are served through signed URLs that can expire after a configurable
+  amount of time, even when using the default file-system storage backend.
 
-- **Attach images and other files to your models**. Supports one or more
-  individual files per model as well as multiple ordered collections of files.
-- **Optimized storage.** Deduplicates files for optimized storage
-- **Display files in templates.** Render resized thumbnails and optimized
-  versions of your images in templates via a template tag.
-- **Reduce external dependencies.** Django anchor doesn't need any external
-  services and works Django's local file storage.
-
-### Limitations
-
-- Files are prefixed with a random string which makes the URLs for them hard to
-  guess, but they are currently not protected against unauthorized attacks.
-- It only works with Django storage classes in which files are accessible via
-  the file system, i.e. where the
-  [path](https://docs.djangoproject.com/en/5.0/ref/files/storage/#django.core.files.storage.Storage.path)
-  property of a file is implemented.
-- It currently depends on [Huey](https://huey.readthedocs.io/en/latest/) for
-  background processing.
-
-### Future work
-
-- [ ] Remove dependency on `base58`
-- [ ] Implement private file links (maybe via signed URLs?)
-- [ ] Support for async/delayed variant generation
-- [ ] Reduce number of dependencies:
-    - [ ] Make PIL dependency optional
+Django Anchor is essentially a port of the excellent `Active Storage
+<https://edgeguides.rubyonrails.org/active_storage_overview.html>`_ Ruby on
+Rails feature, but leveraging existing Django abstractions and packages of the
+Python ecosystem. Some features are not yet implemented, but the core concepts
+are there two eventually be able to support them.
 
 ## Installation
 
-Django-anchor is compatible with Django >= 4.2 and Python >= 3.10.
+Check out the [installation guide](https://django-anchor.readthedocs.io/en/latest/installation.html) in the documentation for more details.
+
+Django-anchor is compatible with Django >= 4.2 and Python >= 3.11.
 
 1. Add the `django-anchor` package to your dependencies. You can do this by
    running:
@@ -51,9 +34,22 @@ Django-anchor is compatible with Django >= 4.2 and Python >= 3.10.
 
 2. Add  `anchor` to `settings.INSTALLED_APPS`
 
+3. Add URL configuration to your project:
+
+   ```python
+   urlpatterns = [
+       path('anchor/', include('anchor.urls')),
+   ]
+   ```
+
+4. Run migrations:
+
+   ```bash
+   python manage.py migrate
+   ```
+
 In addition, if you wish to create image variants, a Pillow >= 8.4 should be
 available in your system.
-
 
 ## Usage
 
@@ -65,40 +61,32 @@ The easiest way to add a file to a model is to add a `BlobField` to it:
 
 ```python
 from django.db import models
-from anchor.models.fields import BlobField
+from anchor.models.fields import SingleAttachmentField
 
 
 class Movie(models.Model):
     title = models.CharField(max_length=100)
 
-    # A compulsory field that must be set on every instance
-    cover = BlobField()
-
-    # An optional file that can be left blank
-    poster = BlobField(blank=True, null=True)
+    cover = SingleAttachmentField()
 ```
 
-Notice how the `BlobField` above can be customized by setting the `blank` and
-`null` options like any other field. It will also accept any other core field
-parameters.
+That's it! No need to run ``makemigrations`` or ``migrate`` since Django Anchor
+doesn't actually need any columns added to the model.
 
-BlobFields are ForeignKey fields under the hood, so after you've added or made
-changes you need to generate a migration with `python manage.py makemigrations`
-and then apply it via `python manage.py migrate`.
-
-Once your migrations are applied you can assign an
-`anchor.models.blob.Blob` object to a `BlobField` much like you'd assign a
-`DjangoFile` object to a `FileField`:
+The ``cover`` field works just like any other model field:
 
 ```python
-from anchor.models.blob import Blob
+# Create a new movie
+movie = Movie.objects.create(title="My Movie")
 
-# A new Blob objects is created and saved to the database with the file metadata
-cover = Blob.objects.from_url('...')
+# Attach an uploaded file
+movie.cover = uploaded_file
 
-# Make our movie point to that Blob object
-movie.cover = cover
-movie.save()
+# Get a URL to the file
+movie.cover.url()
+
+# Get a URL to a miniature version of the file
+movie.cover.representation(resize_to_fit=(200, 200), format="webp").url()
 ```
 
 ### Using files in templates
@@ -107,13 +95,11 @@ Django anchor comes with a handy template tag to render URLs of files you've sto
 
 ```
 {% load anchor %}
-<img src="{% blob_thumbnail movie.poster max_width=300 max_height=600 format='jpeg' %}">
+<img src="{% variant_url movie.cover resize_to_limit='300x600' format='jpeg' %}">
 ```
 
-The above call to `blob_thumbnail` will generate an optimized version of the
-movie's cover in JPEG format which fits inside a 300x600 rectangle. Optimized
-versions are generated asynchronously and if they're not ready for immediate use
-the original file's URL is returned instead to avoid blocking the request.
+The above call to `variant_url` will generate an optimized version of the
+movie's cover in JPEG format which fits inside a 300x600 rectangle.
 
 ## Contributing
 
