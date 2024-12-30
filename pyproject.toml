@@ -7,7 +7,7 @@ authors = [
     { name = "Elias Hernandis", email = "elias@hernandis.me" }
 ]
 license = { name = "MIT", file = "LICENSE.md" }
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 keywords = ["django", "files", "attachments"]
 classifiers = [
     "Framework :: Django",
