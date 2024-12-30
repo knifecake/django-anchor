@@ -8,7 +8,8 @@ build:
     post_create_environment:
       - pip install uv
     post_install:
-      - VIRTUAL_ENV=$READTHEDOCS_VIRTUALENV_PATH uv sync
+      - uv export requirements-txt > requirements.txt
+      - pip install -r requirements.txt
 
 sphinx:
   configuration: docs/conf.py
