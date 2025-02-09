@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.6.1 - 2025-02-09
+
+**Fixed:**
+
+- Fixed a bug where the mime type was not detected for webp files in some versions of Python (#11).
+
 ## v0.3.0 - 2024-07-19
 
 **Added:**
