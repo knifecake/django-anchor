@@ -1,3 +1,5 @@
+import mimetypes
+
 from django.apps import AppConfig
 from django.core.checks import register
 
@@ -11,3 +13,7 @@ class AnchorConfig(AppConfig):
 
     def ready(self):
         register(test_storage_backends)
+
+        # add mime type detection for webp
+        if "image/webp" not in mimetypes.types_map:
+            mimetypes.add_type("image/webp", ".webp", strict=True)

@@ -48,6 +48,11 @@ class TestBlobUnfurling(SimpleTestCase):
     def test_mime_type_is_extracted(self):
         self.assertEqual(self.blob.mime_type, "image/png")
 
+    def test_mime_type_detects_webp(self):
+        blob = Blob()
+        blob.unfurl(File(BytesIO(b"test"), name="test.WEBP"))
+        self.assertEqual(blob.mime_type, "image/webp")
+
     def test_mime_type_is_guessed_if_filename_is_not_available(self):
         blob = Blob(filename=None)
         blob.unfurl(File(BytesIO(b"test")))
