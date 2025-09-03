@@ -36,6 +36,7 @@ class SingleAttachmentRel(GenericRel):
         return self.field.attname
 
     def get_cache_name(self):
+        # For compatibility with Django 4.2
         return self.cache_name
 
 
@@ -109,6 +110,12 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             .select_related("blob")
             .all()
         )
+
+    def get_prefetch_queryset(self, instances, queryset=None):
+        # For compatibility with Django 4.2
+        if queryset is None:
+            queryset = self.get_queryset()
+        return self.get_prefetch_querysets(instances, [queryset])
 
     def get_prefetch_querysets(self, instances, querysets=None):
         if querysets and len(querysets) != 1:
