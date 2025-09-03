@@ -16,12 +16,13 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "tests",
     "anchor",
+    "tests.dummy",
 ]
 
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": "test",
+        "NAME": "tmp/test.sqlite3",
     }
 }
 

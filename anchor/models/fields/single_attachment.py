@@ -55,7 +55,10 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
         except Attachment.DoesNotExist:
             return None
 
-    def __set__(self, instance, value):
+    def __set__(self, instance, value) -> None:
+        if instance._state.adding:
+            raise ValueError("Cannot attach to unsaved objects.")
+
         # Be compatible with how Django handles files in the forms API. A
         # None value signifies that the file was not updated, while a False
         # value signifies that the file should be deleted.
@@ -63,7 +66,7 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
             return
 
         if value is False and self.__get__(instance, cls=Attachment):
-            self.__get__(instance, cls=Attachment).delete()
+            self.__get__(instance, cls=Attachment).purge()
             return
 
         if isinstance(value, Attachment):
@@ -74,7 +77,7 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
                 value.order = 0
                 value.save()
 
-            return
+            return self.__set__(instance, value.blob)
 
         if isinstance(value, Blob):
             blob = value
@@ -109,20 +112,21 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
                 "querysets argument of get_prefetch_querysets() should have a length "
                 "of 1."
             )
+        content_type = ContentType.objects.get_for_model(instances[0])
         queryset = querysets[0] if querysets else self.get_queryset()
         queryset._add_hints(instance=instances[0])
         queryset = queryset.filter(
             object_id__in=(instance.id for instance in instances),
-            content_type=ContentType.objects.get_for_model(instances[0]),
+            content_type=content_type,
             name=self.name,
             order=0,
         )
-        rel_obj_attr = self.related.field.get_local_related_value
 
-        def instance_attr(i):
-            return tuple(
-                str(x) for x in self.related.field.get_foreign_related_value(i)
-            )
+        def rel_obj_attr(rel_obj):
+            return (rel_obj.content_type_id, rel_obj.object_id)
+
+        def instance_attr(instance):
+            return (content_type.id, str(instance.id))
 
         instances_dict = {instance_attr(inst): inst for inst in instances}
 
@@ -131,6 +135,7 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
         for rel_obj in queryset:
             instance = instances_dict[rel_obj_attr(rel_obj)]
             self.related.field.set_cached_value(rel_obj, instance)
+
         return (
             queryset,
             rel_obj_attr,

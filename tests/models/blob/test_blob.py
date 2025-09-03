@@ -108,7 +108,7 @@ class TestBlobKeys(SimpleTestCase):
         self.assertEqual(str(blob), blob.pk)
 
 
-class TestBlobsBehaveLikeFiles(SimpleTestCase):
+class TestBlobsBehaveLikeFiles(TestCase):
     def test_upload_file(self):
         blob = Blob()
         blob.upload(File(BytesIO(b"test"), name="text.txt"))
@@ -203,6 +203,15 @@ class TestBlobQuerySet(TestCase):
         blob = Blob.objects.create(filename="test.png", file=ContentFile(b"test"))
         self.assertIsNotNone(blob.key)
         self.assertIsNotNone(blob.created_at)
+
+    def test_create_from_path(self):
+        path = os.path.join(settings.BASE_DIR, "fixtures", "garlic.png")
+        blob = Blob.objects.from_path(path)
+        self.assertIsNotNone(blob.key)
+        self.assertIsNotNone(blob.created_at)
+        self.assertEqual(blob.filename, "garlic.png")
+        self.assertEqual(blob.mime_type, "image/png")
+        self.assertEqual(blob.byte_size, 8707)
 
 
 class TestBlobCustomMetadata(SimpleTestCase):
