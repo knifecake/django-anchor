@@ -6,8 +6,12 @@ import django
 from django.conf import settings
 from django.test.utils import get_runner
 
+# Add the parent directory to the Python path so tests can be imported
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+
 if __name__ == "__main__":
-    os.environ["DJANGO_SETTINGS_MODULE"] = "tests.settings"
+    os.environ["DJANGO_SETTINGS_MODULE"] = "settings"
     django.setup()
     TestRunner = get_runner(settings)
     test_runner = TestRunner()

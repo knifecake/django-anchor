@@ -1,5 +1,13 @@
 # Changelog
 
+## v0.6.2 - 2025-09-03
+
+**Fixed:**
+
+- Prevent accidentally attaching files to unsaved model instances.
+- Fixed single attachment related manager to work with latest Django versions
+- Updated documentation to reference current method names
+
 ## v0.6.1 - 2025-02-09
 
 **Fixed:**
