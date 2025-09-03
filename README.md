@@ -55,8 +55,8 @@ available in your system.
 
 ## Usage
 
-💡 Check out the [demo](./demo/) Django project for inspiration and the [Getting
-Started
+💡 Check out the [dummy](./tests/dummy//) Django project in the test folder for
+inspiration and the [Getting Started
 guide](https://django-anchor.readthedocs.io/en/latest/getting_started.html) in
 the documentation.
 
@@ -92,6 +92,9 @@ movie.cover.url()
 
 # Get a URL to a miniature version of the file
 movie.cover.representation(resize_to_fit=(200, 200), format="webp").url()
+
+# Delete the cover and remove the file from storage
+movie.cover.purge()
 ```
 
 ### Using files in templates
@@ -100,10 +103,10 @@ Django anchor comes with a handy template tag to render URLs of files you've sto
 
 ```
 {% load anchor %}
-<img src="{% variant_url movie.cover resize_to_limit='300x600' format='jpeg' %}">
+<img src="{% representation_url movie.cover resize_to_fit='300x600' format='jpeg' %}">
 ```
 
-The above call to `variant_url` will generate an optimized version of the
+The above call to `representation_url` will generate an optimized version of the
 movie's cover in JPEG format which fits inside a 300x600 rectangle.
 
 ## Contributing

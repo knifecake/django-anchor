@@ -70,7 +70,6 @@ The ``cover`` field works just like any other model field:
 
     # Delete the file
     movie.cover.purge()
-    movie.cover.delete()
 
 Rendering attachments in templates
 ==================================
