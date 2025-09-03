@@ -3,7 +3,6 @@ __pycache__
 .DS_Store
 .ruff_cache
 *.sqlite3
-demo/media
 docs/_build
 tmp
 dist/
