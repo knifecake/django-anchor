@@ -1,0 +1,8 @@
+{% load anchor %}
+
+{% for dummy in object_list %}
+<div>
+    <h1>{{ dummy.name }}</h1>
+    <img src="{% representation_url dummy.cover resize_to_limit='200x200' %}" alt="{{ dummy.name }}">
+</div>
+{% endfor %}

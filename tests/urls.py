@@ -1,3 +1,6 @@
 from django.urls import include, path
 
-urlpatterns = [path("anchor/", include("anchor.urls"))]
+urlpatterns = [
+    path("anchor/", include("anchor.urls")),
+    path("dummy/", include("tests.dummy.urls")),
+]

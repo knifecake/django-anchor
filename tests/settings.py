@@ -28,9 +28,18 @@ DATABASES = {
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# Internationalization
-# https://docs.djangoproject.com/en/dev/topics/i18n/
+# Templates
+TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": ["django.template.context_processors.request"],
+        },
+    },
+]
 
+# Internationalization
 USE_I18N = True
 LANGUAGE_CODE = "en"
 LANGUAGES = [
