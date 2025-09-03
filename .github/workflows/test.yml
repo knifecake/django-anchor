@@ -36,7 +36,7 @@ jobs:
 
       - name: Run tests
         run: |
-          uv run coverage run runtests.py
+          uv run coverage run tests/run.py
 
       - name: Report coverage
         run: |

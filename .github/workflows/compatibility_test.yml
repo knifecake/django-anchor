@@ -31,7 +31,7 @@ jobs:
 
       - name: Run tests
         run: |
-          uv run runtests.py
+          uv run python tests/run.py
 
   django_compatibility_test:
     runs-on: ubuntu-latest
@@ -61,7 +61,7 @@ jobs:
 
       - name: Run tests
         run: |
-          uv run runtests.py
+          uv run python tests/run.py
 
   pillow_compatibility_test:
     runs-on: ubuntu-latest
@@ -92,4 +92,4 @@ jobs:
 
       - name: Run tests
         run: |
-          uv run runtests.py
+          uv run python tests/run.py
