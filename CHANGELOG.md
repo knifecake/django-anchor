@@ -6,6 +6,7 @@
 
 - Prevent accidentally attaching files to unsaved model instances.
 - Fixed single attachment related manager to work with latest Django versions
+- Fixed image preview for admin widget
 - Updated documentation to reference current method names
 
 ## v0.6.1 - 2025-02-09

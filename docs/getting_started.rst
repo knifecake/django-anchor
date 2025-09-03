@@ -133,11 +133,12 @@ the ``SingleAttachmentField`` model field with a widget that renders a thumbnail
 
 .. code-block:: python
 
+    from anchor.models.fields import SingleAttachmentField
     from anchor.forms.widgets import AdminSingleAttachmentInput
 
     class MovieAdmin(admin.ModelAdmin):
         formfield_overrides = {
-            SingleAttachmentField: {'widget': AdminSingleAttachmentInput},
+            SingleAttachmentField: {'widget': AdminSingleAttachmentInput}
         }
 
 That makes the admin widget look like this:
