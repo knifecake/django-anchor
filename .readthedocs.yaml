@@ -8,6 +8,6 @@ build:
     - asdf plugin add uv
     - asdf install uv 0.5.13
     - asdf global uv 0.5.13
-    - asdf local python 3.13.0
+    - asdf local python 3.13.3
     - uv sync --all-groups --frozen
     - uv run -m sphinx -T -b html -d docs/_build/doctrees -D language=en docs $READTHEDOCS_OUTPUT/html
