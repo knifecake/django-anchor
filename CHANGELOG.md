@@ -8,6 +8,7 @@
 - Fixed single attachment related manager to work with latest Django versions
 - Fixed image preview for admin widget
 - Updated documentation to reference current method names
+- Restored compatibility with Django 4.2
 
 ## v0.6.1 - 2025-02-09
 
