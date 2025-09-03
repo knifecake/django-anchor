@@ -109,3 +109,10 @@ class Attachment(BaseModel):
         details.
         """
         return self.blob.representation(transformations)
+
+    def purge(self):
+        """
+        Deletes the file from the storage backend.
+        """
+        self.delete()
+        self.blob.purge()

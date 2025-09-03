@@ -308,6 +308,7 @@ class Blob(KeysMixin, RepresentationsMixin, BaseModel):
         """
         Deletes the file from the storage backend.
         """
+        self.delete()
         self.storage.delete(self.key)
 
     @property
