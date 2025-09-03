@@ -35,6 +35,9 @@ class SingleAttachmentRel(GenericRel):
         # the same instance
         return self.field.attname
 
+    def get_cache_name(self):
+        return self.cache_name
+
 
 class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
     def __init__(
@@ -67,6 +70,7 @@ class ReverseSingleAttachmentDescriptor(ReverseOneToOneDescriptor):
 
         if value is False and self.__get__(instance, cls=Attachment):
             self.__get__(instance, cls=Attachment).purge()
+            self.related.field.set_cached_value(instance, None)
             return
 
         if isinstance(value, Attachment):
