@@ -24,7 +24,7 @@ Check out the [installation
 guide](https://django-anchor.readthedocs.io/en/latest/installation.html) in the
 documentation for more details.
 
-Django-anchor is compatible with Django >= 4.2 and Python >= 3.11.
+Django-anchor is compatible with Django >= 4.2 and Python >= 3.12.
 
 1. Add the `django-anchor` package to your dependencies. You can do this by
    running:
