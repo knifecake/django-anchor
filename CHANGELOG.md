@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.7.0 - 2025-12-21
+
+**Added:**
+
+- Added explicit support for Django 6.0
+
+**Removed:**
+
+- Dropped support for Python <= 3.11
+
 ## v0.6.2 - 2025-09-03
 
 **Fixed:**
