@@ -28,3 +28,25 @@ class TestFileSystemView(TestCase):
         deleted_blob.purge()
         response = self.client.get(deleted_blob.url())
         self.assertEqual(response.status_code, 404)
+
+    def test_get_inline_sets_inline_content_disposition(self):
+        response = self.client.get(self.blob.url(disposition="inline"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("inline", response.headers["Content-Disposition"])
+
+    def test_get_attachment_sets_attachment_content_disposition(self):
+        response = self.client.get(self.blob.url(disposition="attachment"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("attachment", response.headers["Content-Disposition"])
+
+    def test_get_with_filename_includes_filename_in_content_disposition(self):
+        blob = Blob.objects.create(file=ContentFile("test", name="invoice.pdf"))
+        response = self.client.get(blob.url())
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("invoice.pdf", response.headers["Content-Disposition"])
+
+    def test_get_with_overridden_filename(self):
+        blob = Blob.objects.create(file=ContentFile("test", name="invoice.pdf"))
+        response = self.client.get(blob.url(filename="custom-name.pdf"))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("custom-name.pdf", response.headers["Content-Disposition"])

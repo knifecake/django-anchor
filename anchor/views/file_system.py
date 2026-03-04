@@ -13,10 +13,11 @@ class FileSystemView(View):
         try:
             key = Blob.unsign_id(signed_key, purpose="file_system")
             service = storages.create_storage(storages.backends[key["backend"]])
+            disposition = key.get("disposition", "inline")
             response = FileResponse(
                 service.open(key["key"]),
                 content_type=key.get("mime_type", anchor_settings.DEFAULT_MIME_TYPE),
-                as_attachment=False,
+                as_attachment=disposition == "attachment",
                 filename=filename,
             )
             return response

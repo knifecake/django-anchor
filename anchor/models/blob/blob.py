@@ -271,7 +271,12 @@ class Blob(KeysMixin, RepresentationsMixin, BaseModel):
         """
         return storages.create_storage(storages.backends[self.backend])
 
-    def url(self, expires_in: timezone.timedelta = None, disposition: str = "inline"):
+    def url(
+        self,
+        expires_in: timezone.timedelta = None,
+        disposition: str = "inline",
+        filename: str = None,
+    ):
         """
         Returns a URL to the file's location in the storage backend.
 
@@ -279,9 +284,18 @@ class Blob(KeysMixin, RepresentationsMixin, BaseModel):
         file-system-based backends). Instead of sharing this URL directly, refer
         to the :py:func:`blob_url <anchor.templatetags.anchor.blob_url>`
         template tag to generate a signed, expiring URL.
+
+        By default, the blob's own :py:attr:`filename` is forwarded to the
+        storage backend so that browsers suggest a sensible name when displaying
+        or saving the file.  Pass an explicit ``filename`` to override that
+        value at the call site.
         """
         return self.url_service.url(
-            self.key, expires_in=expires_in, disposition=disposition
+            self.key,
+            expires_in=expires_in,
+            disposition=disposition,
+            filename=filename if filename is not None else self.filename,
+            mime_type=self.mime_type,
         )
 
     @property
