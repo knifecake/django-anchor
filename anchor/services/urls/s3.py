@@ -22,5 +22,8 @@ class S3URLGenerator(BaseURLGenerator):
         if mime_type:
             parameters["ResponseContentType"] = mime_type
         if disposition:
-            parameters["ResponseContentDisposition"] = disposition
+            disposition_value = disposition
+            if filename:
+                disposition_value = f'{disposition}; filename="{filename}"'
+            parameters["ResponseContentDisposition"] = disposition_value
         return self.storage.url(key, expire=expire, parameters=parameters)

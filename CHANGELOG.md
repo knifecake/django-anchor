@@ -1,5 +1,25 @@
 # Changelog
 
+## v0.8.0 - 2026-03-04
+
+**Fixed:**
+
+- `Blob.url()` now forwards the blob's `filename` to the storage backend by
+  default, so browsers receive a sensible filename via the `Content-Disposition`
+  header when displaying or saving files.  Pass an explicit `filename` keyword
+  argument to override the default at the call site.
+- `S3URLGenerator` now includes the filename in the `ResponseContentDisposition`
+  parameter passed to S3-compatible backends (e.g. `inline; filename="invoice.pdf"`),
+  ensuring the correct filename is suggested when files are opened in the browser
+  or downloaded.
+- `FileSystemView` now respects the `disposition` value encoded in the signed
+  URL key, so files requested with `disposition="attachment"` are correctly
+  served with `Content-Disposition: attachment` instead of always being served
+  inline.
+- `Blob.url()` now also forwards `mime_type` to the URL service, which allows
+  S3-compatible backends to set the correct `ResponseContentType` header without
+  the caller having to specify it explicitly.
+
 ## v0.7.0 - 2025-12-21
 
 **Added:**

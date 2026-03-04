@@ -138,6 +138,24 @@ class TestBlobURLs(SimpleTestCase):
         blob = Blob()
         self.assertIsNotNone(blob.url)
 
+    def test_url_uses_blob_filename_by_default(self):
+        blob = Blob(filename="invoice.pdf")
+        url = blob.url()
+        # For the default filesystem backend the filename appears in the URL path.
+        self.assertIn("invoice.pdf", url)
+
+    def test_url_accepts_explicit_filename_override(self):
+        blob = Blob(filename="invoice.pdf")
+        url = blob.url(filename="custom-name.pdf")
+        self.assertIn("custom-name.pdf", url)
+        self.assertNotIn("invoice.pdf", url)
+
+    def test_url_without_filename_omits_filename_segment(self):
+        blob = Blob(filename=None)
+        url = blob.url()
+        # URL should not contain a literal "None"
+        self.assertNotIn("None", url)
+
     @skipUnless("r2-dev" in settings.STORAGES, "R2 is not configured")
     def test_urls_are_generated_for_r2(self):
         blob = Blob(backend="r2-dev", key="image.png")
