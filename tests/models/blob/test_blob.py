@@ -168,6 +168,22 @@ class TestBlobURLs(SimpleTestCase):
         self.assertEqual(response.status_code, 200)
 
 
+class TestBlobBackend(TestCase):
+    def test_backend_is_preserved_after_loading_from_db(self):
+        blob = Blob.objects.create(filename="test.png", backend="documents")
+        blob.refresh_from_db()
+        self.assertEqual(blob.backend, "documents")
+
+    def test_backend_is_preserved_when_fetched_from_queryset(self):
+        blob = Blob.objects.create(filename="test.png", backend="documents")
+        fetched = Blob.objects.get(pk=blob.pk)
+        self.assertEqual(fetched.backend, "documents")
+
+    def test_backend_defaults_to_default_for_new_blobs(self):
+        blob = Blob()
+        self.assertEqual(blob.backend, anchor_settings.DEFAULT_STORAGE_BACKEND)
+
+
 class TestBlobQuerySet(TestCase):
     def test_get_signed(self):
         blob = Blob.objects.create(filename="test.png")
