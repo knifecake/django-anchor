@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.9.0 - 2026-03-11
+
+**Improved:**
+
+- Blob admin change view now shows a clickable link to the file that opens in a
+  new tab.
+- Blob admin list and detail views now show the number of attachments linked to
+  each blob.
+- Existing blobs are no longer editable in the admin (save buttons are hidden),
+  while blob creation is still supported.
+
 ## v0.8.1 - 2026-03-10
 
 **Fixed:**
