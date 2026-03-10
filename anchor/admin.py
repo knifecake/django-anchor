@@ -1,6 +1,7 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
+from django.db.models import Count
 from django.template.defaultfilters import filesizeformat
 from django.utils.html import format_html
 
@@ -59,7 +60,13 @@ class BlobAdmin(admin.ModelAdmin):
     ordering = ("id",)
     date_hierarchy = "created_at"
     search_fields = ("filename", "id", "checksum")
-    list_display = ("filename", "human_size", "backend", "created_at")
+    list_display = (
+        "filename",
+        "human_size",
+        "attachment_count",
+        "backend",
+        "created_at",
+    )
     list_filter = ("backend", "mime_type")
     readonly_fields = (
         "filename",
@@ -68,8 +75,11 @@ class BlobAdmin(admin.ModelAdmin):
         "human_size",
         "checksum",
         "preview",
+        "file_link",
         "key",
         "id",
+        "backend",
+        "attachment_count",
         "created_at",
     )
     fieldsets = (
@@ -80,7 +90,9 @@ class BlobAdmin(admin.ModelAdmin):
                     ("key",),
                     ("filename",),
                     ("mime_type", "human_size", "checksum"),
+                    ("backend", "attachment_count"),
                     ("preview",),
+                    ("file_link",),
                     ("id", "created_at"),
                 )
             },
@@ -91,6 +103,10 @@ class BlobAdmin(admin.ModelAdmin):
     def human_size(self, instance: Blob):
         return filesizeformat(instance.byte_size)
 
+    @admin.display(description="Attachments")
+    def attachment_count(self, instance: Blob):
+        return instance.attachment_count
+
     def preview(self, instance: Blob):
         if instance.is_image:
             return format_html(
@@ -99,6 +115,20 @@ class BlobAdmin(admin.ModelAdmin):
             )
 
         return "-"
+
+    @admin.display(description="File")
+    def file_link(self, instance: Blob):
+        if not instance.key:
+            return "-"
+        url = instance.url()
+        return format_html('<a href="{}" target="_blank">{}</a>', url, url)
+
+    def get_queryset(self, request):
+        return (
+            super()
+            .get_queryset(request)
+            .annotate(attachment_count=Count("attachments"))
+        )
 
     def get_form(self, request, obj=None, **kwargs):
         if obj is None:
@@ -119,6 +149,11 @@ class BlobAdmin(admin.ModelAdmin):
             ]
 
         return super().get_fieldsets(request, obj)
+
+    def has_change_permission(self, request, obj=None):
+        if obj is not None:
+            return False
+        return super().has_change_permission(request, obj)
 
 
 @admin.register(VariantRecord)
