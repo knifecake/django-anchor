@@ -1,7 +1,6 @@
 from django import forms
 from django.conf import settings
 from django.contrib import admin
-from django.db.models import Count
 from django.template.defaultfilters import filesizeformat
 from django.utils.html import format_html
 
@@ -60,13 +59,7 @@ class BlobAdmin(admin.ModelAdmin):
     ordering = ("id",)
     date_hierarchy = "created_at"
     search_fields = ("filename", "id", "checksum")
-    list_display = (
-        "filename",
-        "human_size",
-        "attachment_count",
-        "backend",
-        "created_at",
-    )
+    list_display = ("filename", "human_size", "backend", "created_at")
     list_filter = ("backend", "mime_type")
     readonly_fields = (
         "filename",
@@ -105,7 +98,7 @@ class BlobAdmin(admin.ModelAdmin):
 
     @admin.display(description="Attachments")
     def attachment_count(self, instance: Blob):
-        return instance.attachment_count
+        return instance.attachments.count()
 
     def preview(self, instance: Blob):
         if instance.is_image:
@@ -122,13 +115,6 @@ class BlobAdmin(admin.ModelAdmin):
             return "-"
         url = instance.url()
         return format_html('<a href="{}" target="_blank">{}</a>', url, url)
-
-    def get_queryset(self, request):
-        return (
-            super()
-            .get_queryset(request)
-            .annotate(attachment_count=Count("attachments"))
-        )
 
     def get_form(self, request, obj=None, **kwargs):
         if obj is None:
