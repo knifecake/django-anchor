@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.8.1 - 2026-03-10
+
+**Fixed:**
+
+- Fixed a bug where `Blob.__init__` silently overwrote the `backend` field with
+  the default value every time a Blob was loaded from the database. This caused
+  blobs stored on non-default backends (e.g. a private documents backend) to
+  generate URLs using the default backend's configuration, resulting in incorrect
+  hostnames and unsigned URLs.
+
 ## v0.8.0 - 2026-03-04
 
 **Fixed:**

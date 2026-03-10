@@ -140,15 +140,12 @@ class Blob(KeysMixin, RepresentationsMixin, BaseModel):
     If you need to store custom metadata, refer to the :py:attr:`custom_metadata` property.
     """
 
-    def __init__(self, *args, backend=None, **kwargs):
+    def __init__(self, *args, **kwargs):
+        if not args and not kwargs.get("backend"):
+            kwargs["backend"] = anchor_settings.DEFAULT_STORAGE_BACKEND
         super().__init__(*args, **kwargs)
         if self.key == "":
             self.key = type(self).generate_key()
-
-        if backend is not None:
-            self.backend = backend
-        else:
-            self.backend = anchor_settings.DEFAULT_STORAGE_BACKEND
 
     @property
     def signed_id(self):
