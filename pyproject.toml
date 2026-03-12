@@ -27,7 +27,7 @@ classifiers = [
 ]
 dependencies = [
     "django>=4.2",
-    "pillow>=9.5,<12",
+    "pillow>=9.5,<13",
 ]
 
 [project.urls]
