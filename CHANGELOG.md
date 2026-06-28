@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.9.1 - 2026-06-28
+
+**Improved:**
+
+- Remove artificial upper version constraint on Pillow to support Pillow 12.
+- Upgrade dependencies to their latest versions.
+
 ## v0.9.0 - 2026-03-11
 
 **Improved:**
