@@ -17,7 +17,7 @@ class S3URLGenerator(BaseURLGenerator):
         mime_type: str = None,
         disposition: str = None,
     ) -> str:
-        expire = expires_in.total_seconds() if expires_in else None
+        expire = int(expires_in.total_seconds()) if expires_in is not None else None
         parameters = {}
         if mime_type:
             parameters["ResponseContentType"] = mime_type
