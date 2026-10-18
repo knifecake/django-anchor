@@ -1,5 +1,14 @@
 # Changelog
 
+## v0.9.2 - 2026-10-18
+
+**Fixed:**
+
+- Reuse Django's configured storage instances when generating attachment URLs,
+  avoiding a new S3 session and client for every attachment.
+- Pass explicit S3 URL expiry durations as integer seconds and preserve an
+  explicit zero duration instead of falling back to the backend default.
+
 ## v0.9.1 - 2026-06-28
 
 **Improved:**
