@@ -18,7 +18,7 @@ class BaseURLGenerator:
 
     def __init__(self, backend: str = "default"):
         self.backend = backend
-        self.storage = storages.create_storage(storages.backends[self.backend])
+        self.storage = storages[self.backend]
 
     def url(
         self,
