@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+**Fixed:**
+
+- Reuse process-local S3 signing clients across request threads, avoiding repeated
+  client initialization under ASGI. Keep storage configurations isolated and
+  discard inherited clients and initialization locks after a process fork.
+
 ## v0.9.2 - 2026-10-18
 
 **Fixed:**
